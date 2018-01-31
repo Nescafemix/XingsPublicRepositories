@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 
 public class ReposRepositoryUnitTest extends UnitTest{
     private ReposRepository reposRepository;
-
+    private int FIRST_PAGE = 1;
     @Mock ReposRepository.Callback reposCallbackMock;
     @Mock ReposCloudDataSource reposCloudDataSource;
     @Mock List<Repo> reposMock;
@@ -26,11 +26,11 @@ public class ReposRepositoryUnitTest extends UnitTest{
 
     @Test
     public void shouldGetRepos() {
-        doReturn(reposMock).when(reposCloudDataSource).getRepos();
+        doReturn(reposMock).when(reposCloudDataSource).getRepos(FIRST_PAGE);
 
-        reposRepository.getRepos(reposCallbackMock);
+        reposRepository.getRepos(FIRST_PAGE, reposCallbackMock);
 
-        verify(reposCloudDataSource).getRepos();
+        verify(reposCloudDataSource).getRepos(eq(FIRST_PAGE));
         verify(reposCallbackMock).onSuccess(eq(reposMock));
     }
 }

@@ -6,10 +6,12 @@ import com.joanfuentes.xingsprojectrepositories.data.api.RepoApi;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class ReposCloudDataSourceUnitTest extends UnitTest{
     private ReposCloudDataSource datasource;
+    private int FIRST_PAGE = 1;
     @Mock RepoApi repoApiMock;
 
     @Override
@@ -19,8 +21,8 @@ public class ReposCloudDataSourceUnitTest extends UnitTest{
 
     @Test
     public void shouldGetRepos() {
-        datasource.getRepos();
+        datasource.getRepos(FIRST_PAGE);
 
-        verify(repoApiMock).getRepos();
+        verify(repoApiMock).getRepos(eq(FIRST_PAGE));
     }
 }
