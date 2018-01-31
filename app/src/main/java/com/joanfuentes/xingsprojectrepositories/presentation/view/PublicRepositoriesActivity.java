@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.R;
@@ -104,4 +105,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
+    public void renderError() {
+        Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+    }
 }
