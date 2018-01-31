@@ -15,5 +15,6 @@ public interface RepoEndpoint {
     @GET(ENDPOINT)
     Call<List<RepoEndpointResponse>> getRepos(@Path("user") String user,
                                               @Query("page") int page,
-                                              @Query("per_page") int perPage);
+                                              @Query("per_page") int perPage,
+                                              @Query("access_token") String accessToken);
 }
