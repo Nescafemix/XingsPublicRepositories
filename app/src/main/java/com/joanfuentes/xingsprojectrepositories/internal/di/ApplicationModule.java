@@ -4,8 +4,8 @@ import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.threading.PostExecutionThread;
 import com.joanfuentes.xingsprojectrepositories.threading.ThreadExecutor;
 
-public interface ApplicationComponent {
-    Application getApplication();
-    ThreadExecutor getThreadExecutor();
-    PostExecutionThread getPostExecutionThread();
+public interface ApplicationModule {
+    Application provideApplication();
+    ThreadExecutor provideThreadExecutor();
+    PostExecutionThread providePostExecutionThread();
 }
