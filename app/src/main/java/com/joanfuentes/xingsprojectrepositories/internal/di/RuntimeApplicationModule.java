@@ -1,6 +1,7 @@
 package com.joanfuentes.xingsprojectrepositories.internal.di;
 
 import com.joanfuentes.xingsprojectrepositories.Application;
+import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.internal.di.EndpointsModule;
 import com.joanfuentes.xingsprojectrepositories.threading.JobExecutor;
 import com.joanfuentes.xingsprojectrepositories.threading.PostExecutionThread;
 import com.joanfuentes.xingsprojectrepositories.threading.ThreadExecutor;
@@ -11,7 +12,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-@Module()
+@Module( includes = {EndpointsModule.class})
 public class RuntimeApplicationModule implements ApplicationModule {
     private final Application application;
 
