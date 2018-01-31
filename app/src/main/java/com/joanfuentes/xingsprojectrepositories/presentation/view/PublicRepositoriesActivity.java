@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Toast;
 
 import com.joanfuentes.xingsprojectrepositories.Application;
@@ -95,10 +96,17 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void setupFirstTimeRecyclerView(List<Repo> repos) {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerViewAdapter.setData(repos);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
+            @Override
+            public boolean onLoadMore(int page) {
+                Toast.makeText(PublicRepositoriesActivity.this, "Request page " + page, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 
     private void updateDataOnRecyclerView() {
