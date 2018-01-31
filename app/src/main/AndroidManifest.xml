@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".Application">
-        <activity android:name=".PublicRepositoriesActivity">
+        <activity android:name=".presentation.view.PublicRepositoriesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
