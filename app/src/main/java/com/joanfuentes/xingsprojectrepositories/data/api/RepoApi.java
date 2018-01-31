@@ -29,7 +29,7 @@ public class RepoApi extends AbsRetrofitApi {
         int perPage = 10;
         try {
             final Call<List<RepoEndpointResponse>> apiCaller = endpoint
-                    .getRepos(XING_USER, page, perPage);
+                    .getRepos(XING_USER, page, perPage, PERSONAL_ACCESS_TOKEN);
             final Response<List<RepoEndpointResponse>> response = apiCaller.execute();
             if (response.isSuccessful()) {
                 final List<RepoEndpointResponse> reposEndpointResponse = response.body();
