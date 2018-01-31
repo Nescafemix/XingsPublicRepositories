@@ -1,7 +1,7 @@
 package com.joanfuentes.xingsprojectrepositories.data.api;
 
 import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.RepoEndpoint;
-import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.model.ReposEndpointResponse;
+import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.model.RepoEndpointResponse;
 import com.joanfuentes.xingsprojectrepositories.data.api.model.RepoResponseMapper;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
@@ -28,12 +28,12 @@ public class RepoApi extends AbsRetrofitApi {
         int page = 1;
         int perPage = 10;
         try {
-            final Call<ReposEndpointResponse> apiCaller = endpoint
+            final Call<List<RepoEndpointResponse>> apiCaller = endpoint
                     .getRepos(XING_USER, page, perPage);
-            final Response<ReposEndpointResponse> response = apiCaller.execute();
+            final Response<List<RepoEndpointResponse>> response = apiCaller.execute();
             if (response.isSuccessful()) {
-                final ReposEndpointResponse reposEndpointResponse = response.body();
-                result = mapper.map(reposEndpointResponse.repos);
+                final List<RepoEndpointResponse> reposEndpointResponse = response.body();
+                result = mapper.map(reposEndpointResponse);
             } else {
                 throw new RuntimeException();
             }

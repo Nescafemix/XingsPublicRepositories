@@ -6,7 +6,12 @@ import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class RepoResponseMapper {
+
+    @Inject
+    public RepoResponseMapper(){}
 
     public List<Repo> map(List<RepoEndpointResponse> response) {
         List<Repo> repos = new ArrayList<>();
@@ -23,5 +28,4 @@ public class RepoResponseMapper {
         }
         return repos;
     }
-
 }

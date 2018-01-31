@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Xing\'s Project Repositories</string>
+    <string name="description">Description: </string>
+    <string name="owner">Owner: </string>
 </resources>
