@@ -2,7 +2,6 @@ package com.joanfuentes.xingsprojectrepositories.data.api;
 
 import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.RepoEndpoint;
 import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.model.RepoEndpointResponse;
-import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.model.ReposEndpointResponse;
 import com.joanfuentes.xingsprojectrepositories.data.api.model.RepoResponseMapper;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
