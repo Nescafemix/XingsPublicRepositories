@@ -10,6 +10,7 @@ import android.view.View;
 import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.R;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
+import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPresenter;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.DaggerRuntimeActivityComponent;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.RuntimeActivityModule;
 
@@ -26,6 +27,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @BindView(R.id.initial_progressbar) ContentLoadingProgressBar contentLoadingProgressBar;
     private List<Repo> repos;
 
+    @Inject ReposPresenter presenter;
     @Inject ReposAdapter recyclerViewAdapter;
 
     @Override
@@ -51,6 +53,13 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @Override
     void onViewReady() {
         setSwipe2Refresh();
+        presenter.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        presenter.onStop();
+        super.onStop();
     }
 
     private void setSwipe2Refresh() {
