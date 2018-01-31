@@ -15,7 +15,7 @@ public class ReposCloudDataSource {
         this.api = api;
     }
 
-    public List<Repo> getRepos() {
-        return api.getRepos();
+    public List<Repo> getRepos(int page) {
+        return api.getRepos(page);
     }
 }

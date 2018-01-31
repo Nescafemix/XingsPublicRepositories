@@ -15,13 +15,12 @@ public class ReposRepository {
         this.cloudDataSource = cloudDataSource;
     }
 
-    public void getRepos(final Callback callback) {
+    public void getRepos(final int page, final Callback callback) {
         try {
-            callback.onSuccess(cloudDataSource.getRepos());
+            callback.onSuccess(cloudDataSource.getRepos(page));
         } catch (Exception error) {
             callback.onError();
         }
-
     }
 
     public interface Callback {

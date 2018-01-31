@@ -10,21 +10,26 @@ import javax.inject.Inject;
 
 public class ReposPresenter extends BasePresenter {
     private final PublicRepositoriesActivity activity;
-    private final GetReposUseCase useCase;
+    private final GetReposUseCase getReposUseCase;
+    private static final int FIRST_PAGE = 1;
 
     @Inject
-    public ReposPresenter(PublicRepositoriesActivity activity, GetReposUseCase useCase) {
+    public ReposPresenter(PublicRepositoriesActivity activity, GetReposUseCase getReposUseCase) {
         this.activity = activity;
-        this.useCase = useCase;
+        this.getReposUseCase = getReposUseCase;
     }
 
     @Override
     public void onStart() {
-        executeUseCase();
+        getRepos(FIRST_PAGE);
     }
 
-    private void executeUseCase() {
-        useCase.execute(new GetReposUseCase.Callback() {
+    public void getRepos(int page) {
+        executeGetReposUseCase(page);
+    }
+
+    private void executeGetReposUseCase(int page) {
+        getReposUseCase.execute(page, new GetReposUseCase.Callback() {
             @Override
             public void onReposReady(List<Repo> repos) {
                 activity.renderRepos(repos);
