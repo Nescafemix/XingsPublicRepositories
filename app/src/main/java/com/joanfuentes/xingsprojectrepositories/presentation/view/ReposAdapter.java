@@ -1,7 +1,6 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.view;
 
 import android.content.res.Resources;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,13 +51,15 @@ public class ReposAdapter extends RecyclerView.Adapter {
             repoViewHolder.owner.setText(repoViewHolder.repo.getOwnerLogin());
             repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
             Resources resources = repoViewHolder.itemView.getContext().getResources();
-            int color;
+            int resourceId;
             if (repoViewHolder.repo.isFork()) {
-                color = ResourcesCompat.getColor(resources, R.color.repoForkable, null);
+                resourceId = R.drawable.repo_forkable_row_background;
+//                resourceId = ResourcesCompat.getColor(resources, R.color.repoForkable, null);
             } else {
-                color = ResourcesCompat.getColor(resources, R.color.repoNotForkable, null);
+                resourceId = R.drawable.repo_not_forkable_row_background;
+//                color = ResourcesCompat.getColor(resources, R.color.repoNotForkable, null);
             }
-            repoViewHolder.itemView.setBackgroundColor(color);
+            repoViewHolder.itemView.setBackgroundResource(resourceId);
         }
     }
 
