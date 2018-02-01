@@ -1,6 +1,7 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.view;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @Inject ReposPresenter presenter;
     @Inject ReposAdapter recyclerViewAdapter;
     @Inject EndlessScrollListener endlessScrollListener;
+    @Inject DialogRepoDetail dialogRepoDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,13 +94,13 @@ public class PublicRepositoriesActivity extends BaseActivity {
             this.repos = new ArrayList<>(repos);
             setupFirstTimeRecyclerView(this.repos);
         } else {
-            int lastShowedItemIndex = this.repos.size() - 1;
+            int lastItemIndex = this.repos.size() - 1;
             if (pendingLoadMore) {
-                this.repos.remove(lastShowedItemIndex);
+                this.repos.remove(lastItemIndex);
                 pendingLoadMore = false;
             }
             this.repos.addAll(repos);
-            updateDataOnRecyclerView(lastShowedItemIndex, repos.size());
+            updateDataOnRecyclerView(lastItemIndex, repos.size());
         }
     }
 
@@ -109,25 +111,50 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void setupFirstTimeRecyclerView(List<Repo> repos) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
         recyclerViewAdapter.setData(repos);
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
-        endlessScrollListener.setOnLoadMoreCallback(new EndlessScrollListener.Callback() {
+        endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnScrollListener(endlessScrollListener);
+    }
+
+    @NonNull
+    private ReposAdapter.Callback getItemLongClickListenerCallback() {
+        return new ReposAdapter.Callback() {
             @Override
-            public void onLoadMore(final int page) {
-                pendingLoadMore = true;
-                recyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showLoadMoreProgressBar();
-                        presenter.getRepos(page);
-                    }
-                });
+            public void onLongClick(Repo repo) {
+                showDialogToOpenRepo(repo);
+            }
+        };
+    }
+
+    @NonNull
+    private EndlessScrollListener.Callback getEndlessScrollListenerCallback() {
+        return new EndlessScrollListener.Callback() {
+            @Override
+            public void onLoadMore(int page) {
+                loadNextPage(page);
+            }
+        };
+    }
+
+    private void loadNextPage(final int page) {
+        pendingLoadMore = true;
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                showLoadMoreProgressBar();
+                presenter.getRepos(page);
             }
         });
-        recyclerView.addOnScrollListener(endlessScrollListener);
+    }
+
+    private void showDialogToOpenRepo(Repo repo) {
+        dialogRepoDetail.show(this, repo);
     }
 
     private void showLoadMoreProgressBar() {

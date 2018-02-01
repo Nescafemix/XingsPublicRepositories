@@ -17,10 +17,12 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnLongClick;
 
 public class ReposAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_REPO = 0;
     private static final int VIEW_TYPE_PROGRESSBAR = 1;
+    private Callback onItemLongClickListener;
     private List<Repo> repos;
 
     @Inject
@@ -74,6 +76,10 @@ public class ReposAdapter extends RecyclerView.Adapter {
         this.repos = repos;
     }
 
+    void setOnItemLongClickListener(Callback callback) {
+        this.onItemLongClickListener = callback;
+    }
+
     class RepoViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.nameTextView) TextView name;
         @BindView(R.id.ownerTextView) TextView owner;
@@ -90,11 +96,23 @@ public class ReposAdapter extends RecyclerView.Adapter {
         public String toString() {
             return super.toString() + " '" + name.getText() + "'";
         }
+
+        @OnLongClick()
+        public boolean clickedItemList(View view) {
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onLongClick(repo);
+            }
+            return true;
+        }
     }
 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
         public ProgressViewHolder(View view) {
             super(view);
         }
+    }
+
+    interface Callback {
+        void onLongClick(Repo repo);
     }
 }
