@@ -35,7 +35,7 @@ public class Repo implements Serializable {
     }
 
     public boolean hasValidDescription() {
-        return false;
+        return description != null && !description.isEmpty();
     }
 
     public static class Builder {
