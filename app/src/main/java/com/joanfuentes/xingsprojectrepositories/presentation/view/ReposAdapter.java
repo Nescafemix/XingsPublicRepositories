@@ -21,6 +21,7 @@ import butterknife.OnLongClick;
 import static android.support.v7.widget.RecyclerView.NO_ID;
 
 public class ReposAdapter extends RecyclerView.Adapter {
+    private static final String EMPTY_STRING = "";
     private static final int VIEW_TYPE_REPO = 0;
     private static final int VIEW_TYPE_PROGRESSBAR = 1;
     private Callback onItemLongClickListener;
@@ -58,7 +59,7 @@ public class ReposAdapter extends RecyclerView.Adapter {
                 repoViewHolder.existDescriptionView.setVisibility(View.VISIBLE);
                 repoViewHolder.notExistDescriptionView.setVisibility(View.GONE);
             } else {
-                repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
+                repoViewHolder.description.setText(EMPTY_STRING);
                 repoViewHolder.existDescriptionView.setVisibility(View.GONE);
                 repoViewHolder.notExistDescriptionView.setVisibility(View.VISIBLE);
             }
