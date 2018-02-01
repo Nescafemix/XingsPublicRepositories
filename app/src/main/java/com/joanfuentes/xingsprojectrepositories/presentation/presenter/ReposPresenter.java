@@ -46,6 +46,7 @@ public class ReposPresenter extends BasePresenter {
     public void onStop() {}
 
     public void forceRefresh() {
+        getReposUseCase.invalidateCaches();
         getRepos(FIRST_PAGE);
     }
 }
