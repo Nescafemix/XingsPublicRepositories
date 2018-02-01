@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.joanfuentes.xingsprojectrepositories.R;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,15 +18,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnLongClick;
 
+import static android.support.v7.widget.RecyclerView.NO_ID;
+
 public class ReposAdapter extends RecyclerView.Adapter {
-    private static final String EMPTY_STRING = "";
     private static final int VIEW_TYPE_REPO = 0;
     private static final int VIEW_TYPE_PROGRESSBAR = 1;
     private Callback onItemLongClickListener;
     private List<Repo> repos;
 
     @Inject
-    public ReposAdapter() {}
+    public ReposAdapter() {
+        repos = new ArrayList<>();
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,7 +58,7 @@ public class ReposAdapter extends RecyclerView.Adapter {
                 repoViewHolder.existDescriptionView.setVisibility(View.VISIBLE);
                 repoViewHolder.notExistDescriptionView.setVisibility(View.GONE);
             } else {
-                repoViewHolder.description.setText(EMPTY_STRING);
+                repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
                 repoViewHolder.existDescriptionView.setVisibility(View.GONE);
                 repoViewHolder.notExistDescriptionView.setVisibility(View.VISIBLE);
             }
@@ -74,6 +78,16 @@ public class ReposAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         return repos.get(position) != null ? VIEW_TYPE_REPO : VIEW_TYPE_PROGRESSBAR;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        Repo repo = repos.get(position);
+        long id = NO_ID;
+        if (getItemViewType(position) == VIEW_TYPE_REPO) {
+            id = repo.getHtmlUrl().hashCode();
+        }
+        return id;
     }
 
     public void setData(List<Repo> repos) {
