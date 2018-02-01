@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class RepoMemcacheUnitTest extends UnitTest{
+public class RepoMemcacheUnitTest extends UnitTest {
     private RepoMemcache repoMemcache;
     private int FIRST_PAGE = 1;
     private List<Repo> emptyRepos;
