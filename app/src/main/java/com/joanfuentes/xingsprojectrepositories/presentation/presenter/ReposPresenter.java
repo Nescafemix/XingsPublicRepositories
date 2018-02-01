@@ -44,4 +44,8 @@ public class ReposPresenter extends BasePresenter {
 
     @Override
     public void onStop() {}
+
+    public void forceRefresh() {
+        getRepos(FIRST_PAGE);
+    }
 }

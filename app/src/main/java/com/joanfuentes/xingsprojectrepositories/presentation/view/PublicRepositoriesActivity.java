@@ -69,14 +69,21 @@ public class PublicRepositoriesActivity extends BaseActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                repos.clear();
-
+                forceRefresh();
             }
         });
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+    }
+
+    private void forceRefresh() {
+        int size = repos.size();
+        repos.clear();
+        recyclerViewAdapter.notifyItemRangeRemoved(0, size);
+        endlessScrollListener.resetState();
+        presenter.forceRefresh();
     }
 
     public void renderRepos(List<Repo> repos) {
