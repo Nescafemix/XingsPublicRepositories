@@ -15,6 +15,7 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
     private boolean loading = true;
     private int currentPage = 1;
     private int previousTotalItemCount = 0;
+    private int visibleThreshold = 5;
     private LinearLayoutManager layoutManager;
     private Callback onLoadMoreCallback;
 
@@ -40,7 +41,7 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
                 previousTotalItemCount = totalItemCount;
             }
             if (!loading
-                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem)) {
+                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                 loading = true;
                 currentPage++;
                 if (onLoadMoreCallback != null) {
