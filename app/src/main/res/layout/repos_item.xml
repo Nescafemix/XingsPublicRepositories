@@ -9,15 +9,13 @@
     android:focusable="true">
 
     <TextView
+        style="@style/TitleText"
         android:id="@+id/nameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:textSize="21sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
         tools:text="Repo's name" />
 
     <LinearLayout
@@ -28,17 +26,18 @@
         android:layout_marginRight="16dp">
 
         <TextView
+            style="@style/SubTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/owner" />
 
         <TextView
+            style="@style/OwnerText"
             android:id="@+id/ownerTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="8dp"
-            android:textColor="@color/colorPrimary"
             android:lines="1"
             tools:text="Jack Shaving" />
 
@@ -57,6 +56,7 @@
             android:visibility="visible">
 
             <TextView
+                style="@style/SubTitleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -64,38 +64,30 @@
                 android:text="@string/description" />
 
             <TextView
+                style="@style/DescriptionText"
                 android:id="@+id/descriptionTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:textColor="@color/descriptionColor"
                 tools:text="This is the description of the repository. Lorem ipsum blablabla"
                 android:layout_marginBottom="8dp" />
 
         </LinearLayout>
 
         <TextView
+            style="@style/SubTitleText.NoDescription"
             android:id="@+id/notExistDescriptionView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:textStyle="italic"
             android:text="@string/no_description"
             android:layout_marginBottom="8dp"
             android:visibility="gone"/>
 
-
-
-
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/colorPrimaryDark"/>
+    <include layout="@layout/separator" />
 
 </LinearLayout>
