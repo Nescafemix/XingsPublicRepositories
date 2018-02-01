@@ -2,5 +2,12 @@ package com.joanfuentes.xingsprojectrepositories.data.api;
 
 abstract public class AbsRetrofitApi {
     protected static final String XING_USER = "xing";
-    protected static final String PERSONAL_ACCESS_TOKEN = "c28e73a3843c60c36a2e3789151b51497c07006b";
+    protected static final String PERSONAL_ACCESS_TOKEN = "<PUT-HERE-YOUR-ACCESS-TOKEN>";
+
+    protected String getAccessToken(String accessToken) {
+        if (PERSONAL_ACCESS_TOKEN.equalsIgnoreCase("<PUT-HERE-YOUR-ACCESS-TOKEN>")) {
+            accessToken = null;
+        }
+        return accessToken;
+    }
 }
