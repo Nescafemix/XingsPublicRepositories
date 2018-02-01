@@ -1,7 +1,6 @@
-package com.joanfuentes.xingsprojectrepositories.data.datasource;
+package com.joanfuentes.xingsprojectrepositories.data.memcache;
 
 import com.joanfuentes.xingsprojectrepositories.UnitTest;
-import com.joanfuentes.xingsprojectrepositories.data.memcache.RepoMemcache;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
 import org.junit.Test;
@@ -25,6 +24,14 @@ public class RepoMemcacheUnitTest extends UnitTest{
         emptyRepos = new ArrayList<>();
         filledRepos = new ArrayList<>();
         filledRepos.add(repoMock);
+    }
+
+    @Test
+    public void shouldBeInvalidedTheCache() {
+        repoMemcache.saveRepos(filledRepos, FIRST_PAGE);
+        repoMemcache.invalidate();
+
+        assertEquals(emptyRepos, repoMemcache.getRepos(FIRST_PAGE));
     }
 
     @Test
