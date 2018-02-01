@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnLongClick;
 
 public class ReposAdapter extends RecyclerView.Adapter {
+    private static final String EMPTY_STRING = "";
     private static final int VIEW_TYPE_REPO = 0;
     private static final int VIEW_TYPE_PROGRESSBAR = 1;
     private Callback onItemLongClickListener;
@@ -48,7 +49,15 @@ public class ReposAdapter extends RecyclerView.Adapter {
             repoViewHolder.repo = repos.get(position);
             repoViewHolder.name.setText(repoViewHolder.repo.getName());
             repoViewHolder.owner.setText(repoViewHolder.repo.getOwnerLogin());
-            repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
+            if (repoViewHolder.repo.hasValidDescription()) {
+                repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
+                repoViewHolder.existDescriptionView.setVisibility(View.VISIBLE);
+                repoViewHolder.notExistDescriptionView.setVisibility(View.GONE);
+            } else {
+                repoViewHolder.description.setText(EMPTY_STRING);
+                repoViewHolder.existDescriptionView.setVisibility(View.GONE);
+                repoViewHolder.notExistDescriptionView.setVisibility(View.VISIBLE);
+            }
             int resourceId = R.drawable.repo_not_forkable_row_background;
             if (repoViewHolder.repo.isFork()) {
                 resourceId = R.drawable.repo_forkable_row_background;
@@ -76,6 +85,8 @@ public class ReposAdapter extends RecyclerView.Adapter {
     }
 
     class RepoViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.existDescriptionView) View existDescriptionView;
+        @BindView(R.id.notExistDescriptionView) View notExistDescriptionView;
         @BindView(R.id.nameTextView) TextView name;
         @BindView(R.id.ownerTextView) TextView owner;
         @BindView(R.id.descriptionTextView) TextView description;

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Xing\'s Project Repositories</string>
     <string name="description">Description: </string>
+    <string name="no_description">no description</string>
     <string name="owner">Owner: </string>
     <string name="go_to_repo">Go to repo</string>
     <string name="go_to_owners_repo">Go to owner\'s page</string>
