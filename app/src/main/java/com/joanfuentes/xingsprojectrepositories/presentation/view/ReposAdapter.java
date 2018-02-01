@@ -1,5 +1,6 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.view;
 
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,25 +17,38 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> {
+public class ReposAdapter extends RecyclerView.Adapter {
+    private static final int VIEW_TYPE_REPO = 0;
+    private static final int VIEW_TYPE_PROGRESSBAR = 1;
     private List<Repo> repos;
 
     @Inject
     public ReposAdapter() {}
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.repos_item, parent, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        if (viewType == VIEW_TYPE_REPO) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.repos_item, parent, false);
+            viewHolder = new RepoViewHolder(view);
+        } else {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.loading_more, parent, false);
+            viewHolder = new ProgressViewHolder(v);
+        }
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.repo = repos.get(position);
-        holder.name.setText(holder.repo.getName());
-        holder.owner.setText(holder.repo.getOwnerLogin());
-        holder.description.setText(holder.repo.getDescription());
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof RepoViewHolder) {
+            RepoViewHolder repoViewHolder = (RepoViewHolder) holder;
+            repoViewHolder.repo = repos.get(position);
+            repoViewHolder.name.setText(repoViewHolder.repo.getName());
+            repoViewHolder.owner.setText(repoViewHolder.repo.getOwnerLogin());
+            repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
+        }
     }
 
     @Override
@@ -42,18 +56,23 @@ public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> 
         return repos.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return repos.get(position) != null ? VIEW_TYPE_REPO : VIEW_TYPE_PROGRESSBAR;
+    }
+
     public void setData(List<Repo> repos) {
         this.repos = repos;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class RepoViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.nameTextView) TextView name;
         @BindView(R.id.ownerTextView) TextView owner;
         @BindView(R.id.descriptionTextView) TextView description;
 
         private Repo repo;
 
-        ViewHolder(View view) {
+        RepoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
@@ -61,6 +80,12 @@ public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> 
         @Override
         public String toString() {
             return super.toString() + " '" + name.getText() + "'";
+        }
+    }
+
+    class ProgressViewHolder extends RecyclerView.ViewHolder {
+        public ProgressViewHolder(View view) {
+            super(view);
         }
     }
 }

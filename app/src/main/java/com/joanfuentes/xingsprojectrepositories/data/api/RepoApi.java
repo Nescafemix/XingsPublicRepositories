@@ -23,9 +23,8 @@ public class RepoApi extends AbsRetrofitApi {
         this.mapper = mapper;
     }
 
-    public List<Repo> getRepos() {
+    public List<Repo> getRepos(int page) {
         List<Repo> result;
-        int page = 1;
         int perPage = 10;
         try {
             final Call<List<RepoEndpointResponse>> apiCaller = endpoint
