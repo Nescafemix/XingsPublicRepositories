@@ -2,12 +2,12 @@ package com.joanfuentes.xingsprojectrepositories.presentation.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.R;
@@ -168,6 +168,18 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     public void renderError() {
-        Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+        View rootView = getWindow().getDecorView().getRootView();
+        if (rootView != null) {
+            Snackbar.make(rootView, R.string.threre_was_a_connectivity_error,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            hideRefreshIndicator();
+        }
+    }
+
+    private void hideRefreshIndicator() {
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

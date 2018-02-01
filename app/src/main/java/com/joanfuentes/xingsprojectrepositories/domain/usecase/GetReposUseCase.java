@@ -46,6 +46,10 @@ public class GetReposUseCase implements Runnable {
         this.executor.execute(this);
     }
 
+    public void invalidateCaches() {
+        repository.invalidateCaches();
+    }
+
     public interface Callback {
         void onReposReady(List<Repo> repos);
         void onError();
