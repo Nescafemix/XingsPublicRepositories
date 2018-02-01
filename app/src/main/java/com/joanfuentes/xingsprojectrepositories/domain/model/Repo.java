@@ -34,6 +34,10 @@ public class Repo implements Serializable {
         return fork;
     }
 
+    public boolean hasValidDescription() {
+        return description != null && !description.isEmpty();
+    }
+
     public static class Builder {
         private String name;
         private String description;

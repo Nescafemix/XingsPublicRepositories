@@ -8,4 +8,34 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DescriptionText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/descriptionColor</item>
+    </style>
+
+    <style name="OwnerText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="TitleText" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/titleColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SubTitleText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/subtitleColor</item>
+    </style>
+
+    <style name="SubTitleText.NoDescription">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="Separator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="Separator.RepoItemInList">
+        <item name="android:background">@color/separatorReposInList</item>
+    </style>
+
 </resources>
