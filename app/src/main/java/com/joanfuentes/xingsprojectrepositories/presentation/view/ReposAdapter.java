@@ -1,7 +1,5 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.view;
 
-import android.content.res.Resources;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +15,12 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnLongClick;
 
 public class ReposAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_REPO = 0;
     private static final int VIEW_TYPE_PROGRESSBAR = 1;
+    private Callback onItemLongClickListener;
     private List<Repo> repos;
 
     @Inject
@@ -49,14 +49,11 @@ public class ReposAdapter extends RecyclerView.Adapter {
             repoViewHolder.name.setText(repoViewHolder.repo.getName());
             repoViewHolder.owner.setText(repoViewHolder.repo.getOwnerLogin());
             repoViewHolder.description.setText(repoViewHolder.repo.getDescription());
-            Resources resources = repoViewHolder.itemView.getContext().getResources();
-            int color;
+            int resourceId = R.drawable.repo_not_forkable_row_background;
             if (repoViewHolder.repo.isFork()) {
-                color = ResourcesCompat.getColor(resources, R.color.repoForkable, null);
-            } else {
-                color = ResourcesCompat.getColor(resources, R.color.repoNotForkable, null);
+                resourceId = R.drawable.repo_forkable_row_background;
             }
-            repoViewHolder.itemView.setBackgroundColor(color);
+            repoViewHolder.itemView.setBackgroundResource(resourceId);
         }
     }
 
@@ -72,6 +69,10 @@ public class ReposAdapter extends RecyclerView.Adapter {
 
     public void setData(List<Repo> repos) {
         this.repos = repos;
+    }
+
+    void setOnItemLongClickListener(Callback callback) {
+        this.onItemLongClickListener = callback;
     }
 
     class RepoViewHolder extends RecyclerView.ViewHolder {
@@ -90,11 +91,23 @@ public class ReposAdapter extends RecyclerView.Adapter {
         public String toString() {
             return super.toString() + " '" + name.getText() + "'";
         }
+
+        @OnLongClick()
+        public boolean clickedItemList(View view) {
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onLongClick(repo);
+            }
+            return true;
+        }
     }
 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
         public ProgressViewHolder(View view) {
             super(view);
         }
+    }
+
+    interface Callback {
+        void onLongClick(Repo repo);
     }
 }
