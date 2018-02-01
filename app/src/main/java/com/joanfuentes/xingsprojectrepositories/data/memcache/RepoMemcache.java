@@ -1,7 +1,7 @@
 package com.joanfuentes.xingsprojectrepositories.data.memcache;
 
 import android.support.v4.util.LongSparseArray;
-import android.util.SparseArray;
+import android.support.v4.util.SparseArrayCompat;
 
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
@@ -15,12 +15,12 @@ import javax.inject.Singleton;
 @Singleton
 public class RepoMemcache {
     private final static long VALID_PERIOD_IN_MILLIS = 5 * 60 * 1000;
-    SparseArray<List<Repo>> reposByPage;
-    LongSparseArray<Long> validTimesByReposPage;
+    private SparseArrayCompat<List<Repo>> reposByPage;
+    private LongSparseArray<Long> validTimesByReposPage;
 
     @Inject
     public RepoMemcache() {
-        reposByPage = new SparseArray<>();
+        reposByPage = new SparseArrayCompat<>();
         validTimesByReposPage = new LongSparseArray<>();
     }
 

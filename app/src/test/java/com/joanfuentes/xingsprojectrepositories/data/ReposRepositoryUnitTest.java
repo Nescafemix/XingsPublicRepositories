@@ -54,4 +54,11 @@ public class ReposRepositoryUnitTest extends UnitTest{
         verify(reposCloudDataSource).getRepos(eq(FIRST_PAGE));
         verify(reposCallbackMock).onSuccess(eq(filledRepos));
     }
+
+    @Test
+    public void shouldInvalidateLocalDataSource() {
+        reposRepository.invalidateCaches();
+
+        verify(reposLocalDataSource).invalidate();
+    }
 }
