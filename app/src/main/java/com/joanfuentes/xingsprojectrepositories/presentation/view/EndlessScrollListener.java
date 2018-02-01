@@ -10,7 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class EndlessScrollListener extends RecyclerView.OnScrollListener {
-    private static final int FIRST_PAGE_INDEX = 0;
+    private static final int FIRST_PAGE_INDEX = 1;
     private static final int PROGRESS_BAR_ITEM = 1;
     private boolean loading = true;
     private int currentPage = 1;
