@@ -28,7 +28,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.initial_progressbar) ContentLoadingProgressBar contentLoadingProgressBar;
     private List<Repo> repos;
-    private boolean pendingLoadMore = false;
+    private boolean pendingLoadMore;
 
     @Inject ReposPresenter presenter;
     @Inject ReposAdapter recyclerViewAdapter;
@@ -37,6 +37,8 @@ public class PublicRepositoriesActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        repos = new ArrayList<>();
+        pendingLoadMore = false;
         super.onCreate(savedInstanceState);
     }
 
@@ -81,10 +83,10 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void forceRefresh() {
-        int size = repos.size();
         repos.clear();
-        recyclerViewAdapter.notifyItemRangeRemoved(0, size);
+        recyclerViewAdapter.notifyDataSetChanged();
         endlessScrollListener.resetState();
+        showLoadingProgressBar();
         presenter.forceRefresh();
     }
 
@@ -94,8 +96,9 @@ public class PublicRepositoriesActivity extends BaseActivity {
             this.repos = new ArrayList<>(repos);
             setupFirstTimeRecyclerView(this.repos);
         } else {
-            int lastItemIndex = this.repos.size() - 1;
+            int lastItemIndex = 0;
             if (pendingLoadMore) {
+                lastItemIndex = this.repos.size() - 1;
                 this.repos.remove(lastItemIndex);
                 pendingLoadMore = false;
             }
@@ -105,8 +108,14 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void showList() {
-        contentLoadingProgressBar.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+        contentLoadingProgressBar.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void showLoadingProgressBar() {
+        recyclerView.setVisibility(View.GONE);
+        contentLoadingProgressBar.setVisibility(View.VISIBLE);
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -114,6 +123,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         recyclerViewAdapter.setData(repos);
+        recyclerViewAdapter.setHasStableIds(true);
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
         endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
