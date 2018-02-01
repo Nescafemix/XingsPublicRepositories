@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 public class ReposCloudDataSourceUnitTest extends UnitTest{
     private ReposCloudDataSource datasource;
     private int FIRST_PAGE = 1;
-    @Mock RepoApi repoApiMock;
+    @Mock private RepoApi repoApiMock;
 
     @Override
     protected void onSetup() {
