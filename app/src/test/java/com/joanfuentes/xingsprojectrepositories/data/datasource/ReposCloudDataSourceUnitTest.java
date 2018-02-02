@@ -10,8 +10,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class ReposCloudDataSourceUnitTest extends UnitTest{
+    private static final int FIRST_PAGE = 1;
     private ReposCloudDataSource datasource;
-    private int FIRST_PAGE = 1;
     @Mock private RepoApi repoApiMock;
 
     @Override

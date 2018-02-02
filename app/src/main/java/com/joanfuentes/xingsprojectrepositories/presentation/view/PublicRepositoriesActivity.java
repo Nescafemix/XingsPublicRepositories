@@ -137,7 +137,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
         return new ReposAdapter.Callback() {
             @Override
             public void onLongClick(Repo repo) {
-                showDialogToOpenRepo(repo);
+                showDialogWithRepoDetail(repo);
             }
         };
     }
@@ -163,7 +163,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
         });
     }
 
-    private void showDialogToOpenRepo(Repo repo) {
+    private void showDialogWithRepoDetail(Repo repo) {
         dialogRepoDetail.show(this, repo);
     }
 

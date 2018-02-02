@@ -13,8 +13,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class ReposLocalDataSourceUnitTest extends UnitTest{
+    private static final int FIRST_PAGE = 1;
     private ReposLocalDataSource datasource;
-    private int FIRST_PAGE = 1;
     @Mock private RepoMemcache repoMemcacheMock;
     @Mock private List<Repo> reposMock;
 

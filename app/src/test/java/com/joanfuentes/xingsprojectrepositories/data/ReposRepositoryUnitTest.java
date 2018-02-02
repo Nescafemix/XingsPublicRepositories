@@ -16,12 +16,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 public class ReposRepositoryUnitTest extends UnitTest{
+    private static final int FIRST_PAGE = 1;
     private ReposRepository reposRepository;
-    private int FIRST_PAGE = 1;
-    @Mock ReposRepository.Callback reposCallbackMock;
-    @Mock ReposLocalDataSource reposLocalDataSource;
-    @Mock ReposCloudDataSource reposCloudDataSource;
-    @Mock Repo repoMock;
+    @Mock private ReposRepository.Callback reposCallbackMock;
+    @Mock private ReposLocalDataSource reposLocalDataSource;
+    @Mock private ReposCloudDataSource reposCloudDataSource;
+    @Mock private Repo repoMock;
     private List<Repo> emptyRepos;
     private List<Repo> filledRepos;
 

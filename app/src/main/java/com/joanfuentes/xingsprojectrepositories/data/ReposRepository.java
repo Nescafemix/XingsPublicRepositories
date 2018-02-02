@@ -34,9 +34,9 @@ public class ReposRepository {
         }
     }
 
-    public void invalidateCaches(){
+    public void invalidateCaches() {
         localDataSource.invalidate();
-    };
+    }
 
     public interface Callback {
         void onSuccess(final List<Repo> repos);

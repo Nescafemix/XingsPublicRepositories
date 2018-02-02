@@ -83,10 +83,9 @@ public class ReposAdapter extends RecyclerView.Adapter {
 
     @Override
     public long getItemId(int position) {
-        Repo repo = repos.get(position);
         long id = NO_ID;
         if (getItemViewType(position) == VIEW_TYPE_REPO) {
-            id = repo.getHtmlUrl().hashCode();
+            id = repos.get(position).getHtmlUrl().hashCode();
         }
         return id;
     }
@@ -128,7 +127,7 @@ public class ReposAdapter extends RecyclerView.Adapter {
     }
 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressViewHolder(View view) {
+        ProgressViewHolder(View view) {
             super(view);
         }
     }

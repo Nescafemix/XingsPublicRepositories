@@ -17,9 +17,10 @@ public class DialogRepoDetail {
     @Inject
     public DialogRepoDetail() {}
 
-    public void show(Context context, Repo repo) {
+    void show(Context context, Repo repo) {
         Resources resources = context.getResources();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.Theme_AppCompat_Light_Dialog_Alert);
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context, R.style.Theme_AppCompat_Light_Dialog_Alert);
         builder.setTitle(repo.getName());
         builder.setMessage(repo.getDescription());
         builder.setPositiveButton(resources.getString(R.string.go_to_repo),
@@ -30,7 +31,8 @@ public class DialogRepoDetail {
     }
 
     @NonNull
-    private DialogInterface.OnClickListener getOnCLickListener(final Context context, final String htmlUrl) {
+    private DialogInterface.OnClickListener getOnCLickListener(final Context context,
+                                                               final String htmlUrl) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
