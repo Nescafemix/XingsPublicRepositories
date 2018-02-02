@@ -27,6 +27,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @BindView(R.id.item_list) RecyclerView recyclerView;
     @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.initial_progressbar) ContentLoadingProgressBar contentLoadingProgressBar;
+    @BindView(R.id.connectivity_error) View connectivityErrorView;
     private List<Repo> repos;
     private boolean pendingLoadMore;
 
@@ -115,13 +116,22 @@ public class PublicRepositoriesActivity extends BaseActivity {
 
     private void showList() {
         recyclerView.setVisibility(View.VISIBLE);
+        connectivityErrorView.setVisibility(View.GONE);
         contentLoadingProgressBar.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
     }
 
     private void showLoadingProgressBar() {
-        recyclerView.setVisibility(View.GONE);
         contentLoadingProgressBar.setVisibility(View.VISIBLE);
+        connectivityErrorView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void showConnectivityErrorMessage() {
+        connectivityErrorView.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        contentLoadingProgressBar.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
     }
 
@@ -179,17 +189,25 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     public void renderError() {
-        View rootView = getWindow().getDecorView().getRootView();
-        if (rootView != null) {
-            Snackbar.make(rootView, R.string.threre_was_a_connectivity_error,
-                    Snackbar.LENGTH_SHORT)
-                    .show();
-            hideRefreshIndicator();
-        }
         if (pendingLoadMore) {
             endlessScrollListener.onLoadMoreCallbackFailed();
             removeLastItem();
             pendingLoadMore = false;
+        }
+        if (repos.isEmpty()) {
+            showConnectivityErrorMessage();
+        } else {
+            showConnectivityErrorMessageWithSnackBar();
+        }
+    }
+
+    private void showConnectivityErrorMessageWithSnackBar() {
+        View rootView = getWindow().getDecorView().getRootView();
+        if (rootView != null) {
+            Snackbar.make(rootView, R.string.error_check_connectivity,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            hideRefreshIndicator();
         }
     }
 

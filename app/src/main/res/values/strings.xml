@@ -4,6 +4,6 @@
     <string name="no_description">no description</string>
     <string name="owner">Owner: </string>
     <string name="go_to_repo">Go to repo</string>
-    <string name="threre_was_a_connectivity_error">There was a connectivity error</string>
     <string name="go_to_owners_repo">Go to owner\'s page</string>
+    <string name="error_check_connectivity">There was an error. Check your connectivity</string>
 </resources>
