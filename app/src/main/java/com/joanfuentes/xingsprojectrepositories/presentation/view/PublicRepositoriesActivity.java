@@ -229,6 +229,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void loadNextPage(final int page) {
+        this.page = page;
         pendingLoadMore = true;
         recyclerView.post(new Runnable() {
             @Override
@@ -250,6 +251,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
 
     public void renderError() {
         if (pendingLoadMore) {
+            page--;
             endlessScrollListener.onLoadMoreCallbackFailed();
             removeLastItem();
             pendingLoadMore = false;
