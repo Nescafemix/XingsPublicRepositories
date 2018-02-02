@@ -98,13 +98,19 @@ public class PublicRepositoriesActivity extends BaseActivity {
         } else {
             int lastItemIndex = 0;
             if (pendingLoadMore) {
-                lastItemIndex = this.repos.size() - 1;
-                this.repos.remove(lastItemIndex);
+                lastItemIndex = removeLastItem();
                 pendingLoadMore = false;
             }
             this.repos.addAll(repos);
-            updateDataOnRecyclerView(lastItemIndex, repos.size());
+            recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
         }
+    }
+
+    private int removeLastItem() {
+        int lastItemIndex = this.repos.size() - 1;
+        this.repos.remove(lastItemIndex);
+        recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
+        return lastItemIndex;
     }
 
     private void showList() {
@@ -172,11 +178,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
         recyclerViewAdapter.notifyItemInserted(repos.size() - 1);
     }
 
-    private void updateDataOnRecyclerView(int index, int size) {
-        recyclerViewAdapter.notifyItemRemoved(index);
-        recyclerViewAdapter.notifyItemRangeInserted(index, size);
-    }
-
     public void renderError() {
         View rootView = getWindow().getDecorView().getRootView();
         if (rootView != null) {
@@ -184,6 +185,11 @@ public class PublicRepositoriesActivity extends BaseActivity {
                     Snackbar.LENGTH_SHORT)
                     .show();
             hideRefreshIndicator();
+        }
+        if (pendingLoadMore) {
+            endlessScrollListener.onLoadMoreCallbackFailed();
+            removeLastItem();
+            pendingLoadMore = false;
         }
     }
 

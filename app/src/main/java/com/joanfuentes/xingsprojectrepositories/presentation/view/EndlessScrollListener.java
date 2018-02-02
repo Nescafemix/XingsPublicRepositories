@@ -65,6 +65,11 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
         this.loading = true;
     }
 
+    void onLoadMoreCallbackFailed() {
+        this.currentPage--;
+        this.loading = false;
+    }
+
     public interface Callback {
         void onLoadMore(int page);
     }
