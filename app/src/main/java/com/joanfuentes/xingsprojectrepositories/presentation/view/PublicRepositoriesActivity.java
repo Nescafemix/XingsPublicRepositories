@@ -24,12 +24,22 @@ import javax.inject.Inject;
 import butterknife.BindView;
 
 public class PublicRepositoriesActivity extends BaseActivity {
+    private static final String FIRST_LIST_ELEMENT_OFFSET = "first_list_element_offset";
+    private static final String FIRST_LIST_ELEMENT_POSITION = "first_list_element_position";
+    private static final int VISIBLE_THRESHOLD = 5;
+    private List<Repo> repos;
+    private List<Repo> savedRepos;
+    private boolean pendingLoadMore;
+    private int page;
+    private int positionToNavigate;
+    private int offsetToApplyOnPositionToNavigate;
+    private boolean pendingNavigateToPreviousPosition;
+    private boolean pendingLoadNecessaryData;
+
     @BindView(R.id.item_list) RecyclerView recyclerView;
     @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.initial_progressbar) ContentLoadingProgressBar contentLoadingProgressBar;
     @BindView(R.id.connectivity_error) View connectivityErrorView;
-    private List<Repo> repos;
-    private boolean pendingLoadMore;
 
     @Inject ReposPresenter presenter;
     @Inject ReposAdapter recyclerViewAdapter;
@@ -39,7 +49,17 @@ public class PublicRepositoriesActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         repos = new ArrayList<>();
+        savedRepos = new ArrayList<>();
         pendingLoadMore = false;
+        pendingNavigateToPreviousPosition = false;
+        pendingLoadNecessaryData = false;
+        page = 1;
+        if (savedInstanceState != null) {
+            positionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_POSITION);
+            offsetToApplyOnPositionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_OFFSET);
+            pendingNavigateToPreviousPosition = true;
+            pendingLoadNecessaryData = true;
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -70,6 +90,26 @@ public class PublicRepositoriesActivity extends BaseActivity {
         super.onStop();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(FIRST_LIST_ELEMENT_POSITION, getFirstVisibleItemPositionInTheList());
+        outState.putInt(FIRST_LIST_ELEMENT_OFFSET, getFirstVisibleItemOffsetInTheList());
+        super.onSaveInstanceState(outState);
+    }
+
+    private int getFirstVisibleItemOffsetInTheList() {
+        int offset = 0;
+        View startView = recyclerView.getChildAt(0);
+        if (startView != null) {
+            offset = startView.getTop() - recyclerView.getPaddingTop();
+        }
+        return offset;
+    }
+
+    private int getFirstVisibleItemPositionInTheList() {
+        return ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+    }
+
     private void setSwipe2Refresh() {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -92,18 +132,32 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     public void renderRepos(List<Repo> repos) {
-        showList();
-        if (recyclerView.getAdapter() == null) {
-            this.repos = new ArrayList<>(repos);
-            setupFirstTimeRecyclerView(this.repos);
+        if (pendingLoadNecessaryData) {
+            continueLoadingNecessaryData(repos);
         } else {
-            int lastItemIndex = 0;
-            if (pendingLoadMore) {
-                lastItemIndex = removeLastItem();
-                pendingLoadMore = false;
+            showList();
+            if (recyclerView.getAdapter() == null) {
+                this.repos = new ArrayList<>(repos);
+                setupFirstTimeRecyclerView(this.repos);
+            } else {
+                int lastItemIndex = 0;
+                if (pendingLoadMore) {
+                    lastItemIndex = removeLastItem();
+                    pendingLoadMore = false;
+                }
+                this.repos.addAll(repos);
+                recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
             }
-            this.repos.addAll(repos);
-            recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
+        }
+    }
+
+    private void continueLoadingNecessaryData(List<Repo> repos) {
+        savedRepos.addAll(repos);
+        if (positionToNavigate + VISIBLE_THRESHOLD > savedRepos.size() - 1) {
+            loadNextPage(++page);
+        } else {
+            pendingLoadNecessaryData = false;
+            renderRepos(savedRepos);
         }
     }
 
@@ -143,9 +197,15 @@ public class PublicRepositoriesActivity extends BaseActivity {
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
         endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
+        endlessScrollListener.setCurrentPage(page);
+        endlessScrollListener.setVisibleThreshold(VISIBLE_THRESHOLD);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.addOnScrollListener(endlessScrollListener);
+        if (pendingNavigateToPreviousPosition) {
+            layoutManager.scrollToPositionWithOffset(positionToNavigate,
+                    offsetToApplyOnPositionToNavigate);
+        }
     }
 
     @NonNull
@@ -169,6 +229,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private void loadNextPage(final int page) {
+        this.page = page;
         pendingLoadMore = true;
         recyclerView.post(new Runnable() {
             @Override
@@ -190,6 +251,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
 
     public void renderError() {
         if (pendingLoadMore) {
+            page--;
             endlessScrollListener.onLoadMoreCallbackFailed();
             removeLastItem();
             pendingLoadMore = false;

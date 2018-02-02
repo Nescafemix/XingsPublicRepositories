@@ -6,11 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import javax.inject.Inject;
 
 public class EndlessScrollListener extends RecyclerView.OnScrollListener {
-    private static final int FIRST_PAGE_INDEX = 1;
+    private static final int DEFAULT_FIRST_PAGE_INDEX = 1;
     private static final int PROGRESS_BAR_ITEM = 1;
-    private static final int VISIBLE_THRESHOLD = 5;
+    private static final int DEFAULT_VISIBLE_THRESHOLD = 5;
     private boolean loading;
     private int currentPage;
+    private int visibleThreshold;
     private int previousTotalItemCount;
     private LinearLayoutManager layoutManager;
     private Callback onLoadMoreCallback;
@@ -18,7 +19,8 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
     @Inject
     public EndlessScrollListener() {
         loading = true;
-        currentPage = 1;
+        currentPage = DEFAULT_FIRST_PAGE_INDEX;
+        visibleThreshold = DEFAULT_VISIBLE_THRESHOLD;
         previousTotalItemCount = 0;
     }
 
@@ -29,7 +31,7 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
             int visibleItemCount = view.getChildCount();
             int totalItemCount = layoutManager.getItemCount();
             if (totalItemCount < previousTotalItemCount) {
-                this.currentPage = FIRST_PAGE_INDEX;
+                this.currentPage = DEFAULT_FIRST_PAGE_INDEX;
                 this.previousTotalItemCount = totalItemCount;
                 if (totalItemCount == 0) {
                     loading = true;
@@ -41,7 +43,7 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
                 previousTotalItemCount = totalItemCount;
             }
             if (!loading
-                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + VISIBLE_THRESHOLD)) {
+                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                 loading = true;
                 currentPage++;
                 if (onLoadMoreCallback != null) {
@@ -55,12 +57,20 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
         this.layoutManager = linearLayoutManager;
     }
 
+    void setCurrentPage(int page) {
+        this.currentPage = page;
+    }
+
+    void setVisibleThreshold(int visibleThreshold) {
+        this.visibleThreshold = visibleThreshold;
+    }
+
     void setOnLoadMoreCallback(Callback callback) {
         this.onLoadMoreCallback = callback;
     }
 
     void resetState() {
-        this.currentPage = FIRST_PAGE_INDEX;
+        this.currentPage = DEFAULT_FIRST_PAGE_INDEX;
         this.previousTotalItemCount = 0;
         this.loading = true;
     }
