@@ -17,9 +17,8 @@ public class GetReposUseCase implements Runnable {
     private int page;
 
     @Inject
-    public GetReposUseCase(ThreadExecutor executor,
-                            PostExecutionThread postExecution,
-                            ReposRepository repository) {
+    public GetReposUseCase(ThreadExecutor executor, PostExecutionThread postExecution,
+                           ReposRepository repository) {
         this.executor = executor;
         this.postExecution = postExecution;
         this.repository = repository;
@@ -50,11 +49,6 @@ public class GetReposUseCase implements Runnable {
         repository.invalidateCaches();
     }
 
-    public interface Callback {
-        void onReposReady(List<Repo> repos);
-        void onError();
-    }
-
     private void notifyOnSuccess(final List<Repo> repos) {
         postExecution.post(new Runnable() {
             @Override
@@ -64,12 +58,17 @@ public class GetReposUseCase implements Runnable {
         });
     }
 
-    protected void notifyOnError() {
+    private void notifyOnError() {
         postExecution.post(new Runnable() {
             @Override
             public void run() {
                 callback.onError();
             }
         });
+    }
+
+    public interface Callback {
+        void onReposReady(List<Repo> repos);
+        void onError();
     }
 }

@@ -127,7 +127,7 @@ public class ReposAdapter extends RecyclerView.Adapter {
     }
 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressViewHolder(View view) {
+        ProgressViewHolder(View view) {
             super(view);
         }
     }

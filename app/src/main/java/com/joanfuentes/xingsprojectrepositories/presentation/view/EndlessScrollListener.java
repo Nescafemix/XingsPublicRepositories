@@ -3,27 +3,27 @@ package com.joanfuentes.xingsprojectrepositories.presentation.view;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
-
-import java.util.List;
-
 import javax.inject.Inject;
 
 public class EndlessScrollListener extends RecyclerView.OnScrollListener {
     private static final int FIRST_PAGE_INDEX = 1;
     private static final int PROGRESS_BAR_ITEM = 1;
-    private boolean loading = true;
-    private int currentPage = 1;
-    private int previousTotalItemCount = 0;
-    private int visibleThreshold = 5;
+    private static final int VISIBLE_THRESHOLD = 5;
+    private boolean loading;
+    private int currentPage;
+    private int previousTotalItemCount;
     private LinearLayoutManager layoutManager;
     private Callback onLoadMoreCallback;
 
     @Inject
-    public EndlessScrollListener() {}
+    public EndlessScrollListener() {
+        loading = true;
+        currentPage = 1;
+        previousTotalItemCount = 0;
+    }
 
     @Override
-    public void onScrolled(RecyclerView view, int dx, int dy){
+    public void onScrolled(RecyclerView view, int dx, int dy) {
         if (dy > 0) {
             int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
             int visibleItemCount = view.getChildCount();
@@ -41,7 +41,7 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
                 previousTotalItemCount = totalItemCount;
             }
             if (!loading
-                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + VISIBLE_THRESHOLD)) {
                 loading = true;
                 currentPage++;
                 if (onLoadMoreCallback != null) {
@@ -51,15 +51,15 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
         }
     }
 
-    public void setLinearLayoutManager(LinearLayoutManager linearLayoutManager) {
+    void setLinearLayoutManager(LinearLayoutManager linearLayoutManager) {
         this.layoutManager = linearLayoutManager;
     }
 
-    public void setOnLoadMoreCallback(Callback callback) {
+    void setOnLoadMoreCallback(Callback callback) {
         this.onLoadMoreCallback = callback;
     }
 
-    public void resetState() {
+    void resetState() {
         this.currentPage = FIRST_PAGE_INDEX;
         this.previousTotalItemCount = 0;
         this.loading = true;

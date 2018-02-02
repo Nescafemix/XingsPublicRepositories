@@ -11,7 +11,7 @@ import javax.inject.Inject;
 public class RepoResponseMapper {
 
     @Inject
-    public RepoResponseMapper(){}
+    public RepoResponseMapper() {}
 
     public List<Repo> map(List<RepoEndpointResponse> response) {
         List<Repo> repos = new ArrayList<>();

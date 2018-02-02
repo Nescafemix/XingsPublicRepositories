@@ -16,11 +16,12 @@ import javax.inject.Singleton;
 @Singleton
 public class RepoMemcache implements Cacheable {
     private final static long VALID_PERIOD_IN_MILLIS = 5 * 60 * 1000;
+    private final static long VALID_TIME_WHEN_NO_CACHE = 0;
     private SparseArrayCompat<List<Repo>> reposByPage;
     private LongSparseArray<Long> validTimesByReposPage;
 
     @Inject
-    public RepoMemcache() {
+    RepoMemcache() {
         reposByPage = new SparseArrayCompat<>();
         validTimesByReposPage = new LongSparseArray<>();
     }
@@ -34,7 +35,7 @@ public class RepoMemcache implements Cacheable {
 
     public List<Repo> getRepos(int page) {
         List<Repo> repos = new ArrayList<>();
-        long validTime = validTimesByReposPage.get(page, 0L);
+        long validTime = validTimesByReposPage.get(page, VALID_TIME_WHEN_NO_CACHE);
         long now = Calendar.getInstance().getTimeInMillis();
         if (validTime >= now) {
             repos = reposByPage.get(page, new ArrayList<Repo>());
