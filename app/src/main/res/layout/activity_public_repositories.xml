@@ -25,6 +25,8 @@
 
         <include layout="@layout/loading" />
 
+        <include layout="@layout/connectivity_error" />
+
     </LinearLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>
