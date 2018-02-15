@@ -11,19 +11,22 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
 public class RepoMemcache implements Cacheable {
+    private static RepoMemcache instance = new RepoMemcache();
     private final static long VALID_PERIOD_IN_MILLIS = 5 * 60 * 1000;
     private final static long VALID_TIME_WHEN_NO_CACHE = 0;
     private SparseArrayCompat<List<Repo>> reposByPage;
     private LongSparseArray<Long> validTimesByReposPage;
 
     @Inject
-    RepoMemcache() {
+    public RepoMemcache() {
         reposByPage = new SparseArrayCompat<>();
         validTimesByReposPage = new LongSparseArray<>();
+    }
+
+    public static RepoMemcache getInstance() {
+        return instance;
     }
 
     public void saveRepos(List<Repo> repos, int page) {
