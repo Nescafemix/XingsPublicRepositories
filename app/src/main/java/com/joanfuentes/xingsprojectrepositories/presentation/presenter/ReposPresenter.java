@@ -32,12 +32,16 @@ public class ReposPresenter extends BasePresenter {
         getReposUseCase.execute(page, new GetReposUseCase.Callback() {
             @Override
             public void onReposReady(List<Repo> repos) {
-                activity.renderRepos(repos);
+                if (activity != null && !activity.isFinishing()) {
+                    activity.renderRepos(repos);
+                }
             }
 
             @Override
             public void onError() {
-                activity.renderError();
+                if (activity != null && !activity.isFinishing()) {
+                    activity.renderError();
+                }
             }
         });
     }
