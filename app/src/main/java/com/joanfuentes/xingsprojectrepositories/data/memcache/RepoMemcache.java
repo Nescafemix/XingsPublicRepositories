@@ -43,7 +43,6 @@ public class RepoMemcache implements Cacheable {
             if (validTime >= now) {
                 repos = reposByPage.get(page, new ArrayList<Repo>());
             }
-
         }
         return repos;
     }
