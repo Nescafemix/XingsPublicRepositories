@@ -12,15 +12,13 @@ public class ReposRepository extends BaseOffsetRepository {
     private final ReposCloudDataSource cloudDataSource;
     private final ReposLocalDataSource localDataSource;
     private int offsetBlock;
-    private int dataBlockSize;
 
     @Inject
     public ReposRepository(ReposLocalDataSource localDataSource,
                            ReposCloudDataSource cloudDataSource) {
         this.localDataSource = localDataSource;
         this.cloudDataSource = cloudDataSource;
-        this.offsetBlock = FISRT_OFFSET_BLOCK;
-        this.dataBlockSize = DATA_BLOCK_SIZE;
+        this.offsetBlock = FIRST_OFFSET_BLOCK;
     }
 
     public void getRepos(final Callback callback) {
@@ -30,7 +28,7 @@ public class ReposRepository extends BaseOffsetRepository {
             callback.onSuccess(repos);
         } else {
             try {
-                repos = cloudDataSource.getRepos(offsetBlock, dataBlockSize);
+                repos = cloudDataSource.getRepos(offsetBlock, DATA_BLOCK_SIZE);
                 localDataSource.saveRepos(repos, offsetBlock);
                 offsetBlock++;
                 callback.onSuccess(repos);
@@ -41,7 +39,7 @@ public class ReposRepository extends BaseOffsetRepository {
     }
 
     public void invalidateCaches() {
-        offsetBlock = FISRT_OFFSET_BLOCK;
+        offsetBlock = FIRST_OFFSET_BLOCK;
         localDataSource.invalidate();
     }
 
