@@ -2,6 +2,7 @@ package com.joanfuentes.xingsprojectrepositories.internal.di;
 
 import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.internal.di.EndpointsModule;
+import com.joanfuentes.xingsprojectrepositories.data.memcache.RepoMemcache;
 import com.joanfuentes.xingsprojectrepositories.threading.JobExecutor;
 import com.joanfuentes.xingsprojectrepositories.threading.PostExecutionThread;
 import com.joanfuentes.xingsprojectrepositories.threading.ThreadExecutor;
@@ -33,5 +34,10 @@ public class RuntimeApplicationModule implements ApplicationModule {
     @Override @Provides @Singleton
     public PostExecutionThread providePostExecutionThread() {
         return UIThread.getInstance();
+    }
+
+    @Override @Provides @Singleton
+    public RepoMemcache provideRepoMemCache() {
+        return RepoMemcache.getInstance();
     }
 }
