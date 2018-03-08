@@ -23,12 +23,12 @@ public class RepoApi extends AbsRetrofitApi {
         this.mapper = mapper;
     }
 
-    public List<Repo> getRepos(int page) {
+    public List<Repo> getRepos(int offsetBlock, int dataBlockSize) {
         List<Repo> result;
         String accessToken = getAccessToken(PERSONAL_ACCESS_TOKEN);
         try {
             final Call<List<RepoEndpointResponse>> apiCaller = endpoint
-                    .getRepos(XING_USER, page, ITEMS_PER_PAGE, accessToken);
+                    .getRepos(XING_USER, offsetBlock, dataBlockSize, accessToken);
             final Response<List<RepoEndpointResponse>> response = apiCaller.execute();
             if (response.isSuccessful()) {
                 final List<RepoEndpointResponse> reposEndpointResponse = response.body();

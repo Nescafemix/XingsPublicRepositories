@@ -30,7 +30,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
     private List<Repo> repos;
     private List<Repo> savedRepos;
     private boolean pendingLoadMore;
-    private int page;
     private int positionToNavigate;
     private int offsetToApplyOnPositionToNavigate;
     private boolean pendingNavigateToPreviousPosition;
@@ -53,7 +52,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
         pendingLoadMore = false;
         pendingNavigateToPreviousPosition = false;
         pendingLoadNecessaryData = false;
-        page = 1;
         if (savedInstanceState != null) {
             positionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_POSITION);
             offsetToApplyOnPositionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_OFFSET);
@@ -154,7 +152,7 @@ public class PublicRepositoriesActivity extends BaseActivity {
     private void continueLoadingNecessaryData(List<Repo> repos) {
         savedRepos.addAll(repos);
         if (positionToNavigate + VISIBLE_THRESHOLD > savedRepos.size() - 1) {
-            loadNextPage(++page);
+            loadMoreData();
         } else {
             pendingLoadNecessaryData = false;
             renderRepos(savedRepos);
@@ -162,9 +160,12 @@ public class PublicRepositoriesActivity extends BaseActivity {
     }
 
     private int removeLastItem() {
-        int lastItemIndex = this.repos.size() - 1;
-        this.repos.remove(lastItemIndex);
-        recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
+        int lastItemIndex = 0;
+        if (!this.repos.isEmpty()) {
+            lastItemIndex = this.repos.size() - 1;
+            this.repos.remove(lastItemIndex);
+            recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
+        }
         return lastItemIndex;
     }
 
@@ -197,7 +198,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
         endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
-        endlessScrollListener.setCurrentPage(page);
         endlessScrollListener.setVisibleThreshold(VISIBLE_THRESHOLD);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -222,20 +222,19 @@ public class PublicRepositoriesActivity extends BaseActivity {
     private EndlessScrollListener.Callback getEndlessScrollListenerCallback() {
         return new EndlessScrollListener.Callback() {
             @Override
-            public void onLoadMore(int page) {
-                loadNextPage(page);
+            public void onLoadMore() {
+                loadMoreData();
             }
         };
     }
 
-    private void loadNextPage(final int page) {
-        this.page = page;
+    private void loadMoreData() {
         pendingLoadMore = true;
         recyclerView.post(new Runnable() {
             @Override
             public void run() {
                 showLoadMoreProgressBar();
-                presenter.getRepos(page);
+                presenter.getRepos();
             }
         });
     }
@@ -251,7 +250,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
 
     public void renderError() {
         if (pendingLoadMore) {
-            page--;
             endlessScrollListener.onLoadMoreCallbackFailed();
             removeLastItem();
             pendingLoadMore = false;

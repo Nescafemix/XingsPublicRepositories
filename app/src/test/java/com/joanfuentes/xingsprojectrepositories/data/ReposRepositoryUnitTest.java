@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 
 public class ReposRepositoryUnitTest extends UnitTest{
     private static final int FIRST_PAGE = 1;
+    private static final int DATA_BLOCK_SIZE = 10;
     private ReposRepository reposRepository;
     @Mock private ReposRepository.Callback reposCallbackMock;
     @Mock private ReposLocalDataSource reposLocalDataSource;
@@ -37,7 +38,7 @@ public class ReposRepositoryUnitTest extends UnitTest{
     public void shouldGetReposFromLocalDataSource() {
         doReturn(filledRepos).when(reposLocalDataSource).getRepos(FIRST_PAGE);
 
-        reposRepository.getRepos(FIRST_PAGE, reposCallbackMock);
+        reposRepository.getRepos(reposCallbackMock);
 
         verify(reposLocalDataSource).getRepos(eq(FIRST_PAGE));
         verify(reposCallbackMock).onSuccess(eq(filledRepos));
@@ -46,12 +47,12 @@ public class ReposRepositoryUnitTest extends UnitTest{
     @Test
     public void shouldGetReposFromCloudDataSource() {
         doReturn(emptyRepos).when(reposLocalDataSource).getRepos(FIRST_PAGE);
-        doReturn(filledRepos).when(reposCloudDataSource).getRepos(FIRST_PAGE);
+        doReturn(filledRepos).when(reposCloudDataSource).getRepos(FIRST_PAGE, DATA_BLOCK_SIZE);
 
-        reposRepository.getRepos(FIRST_PAGE, reposCallbackMock);
+        reposRepository.getRepos(reposCallbackMock);
 
         verify(reposLocalDataSource).getRepos(eq(FIRST_PAGE));
-        verify(reposCloudDataSource).getRepos(eq(FIRST_PAGE));
+        verify(reposCloudDataSource).getRepos(eq(FIRST_PAGE), eq(DATA_BLOCK_SIZE));
         verify(reposCallbackMock).onSuccess(eq(filledRepos));
     }
 

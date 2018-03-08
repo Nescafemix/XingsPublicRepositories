@@ -11,7 +11,6 @@ import javax.inject.Inject;
 public class ReposPresenter extends BasePresenter {
     private final PublicRepositoriesActivity activity;
     private final GetReposUseCase getReposUseCase;
-    private static final int FIRST_PAGE = 1;
 
     @Inject
     public ReposPresenter(PublicRepositoriesActivity activity, GetReposUseCase getReposUseCase) {
@@ -21,15 +20,15 @@ public class ReposPresenter extends BasePresenter {
 
     @Override
     public void onStart() {
-        getRepos(FIRST_PAGE);
+        getRepos();
     }
 
-    public void getRepos(int page) {
-        executeGetReposUseCase(page);
+    public void getRepos() {
+        executeGetReposUseCase();
     }
 
-    private void executeGetReposUseCase(int page) {
-        getReposUseCase.execute(page, new GetReposUseCase.Callback() {
+    private void executeGetReposUseCase() {
+        getReposUseCase.execute(new GetReposUseCase.Callback() {
             @Override
             public void onReposReady(List<Repo> repos) {
                 if (activity != null && !activity.isFinishing()) {
@@ -51,6 +50,6 @@ public class ReposPresenter extends BasePresenter {
 
     public void forceRefresh() {
         getReposUseCase.invalidateCaches();
-        getRepos(FIRST_PAGE);
+        getRepos();
     }
 }
