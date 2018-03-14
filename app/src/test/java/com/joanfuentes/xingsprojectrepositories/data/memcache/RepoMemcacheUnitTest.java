@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class RepoMemcacheUnitTest extends UnitTest {
-    private static final int FIRST_PAGE = 1;
+    private static final int FIRST_OFFSET_BLOCK = 1;
     private RepoMemcache repoMemcache;
     private List<Repo> emptyRepos;
     private List<Repo> filledRepos;
@@ -28,21 +28,21 @@ public class RepoMemcacheUnitTest extends UnitTest {
 
     @Test
     public void shouldBeInvalidedTheCache() {
-        repoMemcache.saveRepos(filledRepos, FIRST_PAGE);
+        repoMemcache.saveRepos(filledRepos, FIRST_OFFSET_BLOCK);
         repoMemcache.invalidate();
 
-        assertEquals(emptyRepos, repoMemcache.getRepos(FIRST_PAGE));
+        assertEquals(emptyRepos, repoMemcache.getRepos(FIRST_OFFSET_BLOCK));
     }
 
     @Test
     public void shouldGetReposFromValidCache() {
-        repoMemcache.saveRepos(filledRepos, FIRST_PAGE);
+        repoMemcache.saveRepos(filledRepos, FIRST_OFFSET_BLOCK);
 
-        assertEquals(filledRepos, repoMemcache.getRepos(FIRST_PAGE));
+        assertEquals(filledRepos, repoMemcache.getRepos(FIRST_OFFSET_BLOCK));
     }
 
     @Test
     public void shouldNotGetReposFromValidCache() {
-        assertEquals(emptyRepos, repoMemcache.getRepos(FIRST_PAGE));
+        assertEquals(emptyRepos, repoMemcache.getRepos(FIRST_OFFSET_BLOCK));
     }
 }
