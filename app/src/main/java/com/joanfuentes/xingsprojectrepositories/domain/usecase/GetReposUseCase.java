@@ -14,7 +14,6 @@ public class GetReposUseCase implements Runnable {
     private final PostExecutionThread postExecution;
     private final ReposRepository repository;
     private Callback callback;
-    private int page;
 
     @Inject
     public GetReposUseCase(ThreadExecutor executor, PostExecutionThread postExecution,
@@ -26,7 +25,7 @@ public class GetReposUseCase implements Runnable {
 
     @Override
     public void run() {
-        repository.getRepos(page, new ReposRepository.Callback() {
+        repository.getRepos(new ReposRepository.Callback() {
             @Override
             public void onSuccess(final List<Repo> repos) {
                 notifyOnSuccess(repos);
@@ -39,8 +38,7 @@ public class GetReposUseCase implements Runnable {
         });
     }
 
-    public void execute(final int page, final Callback callback) {
-        this.page = page;
+    public void execute(final Callback callback) {
         this.callback = callback;
         this.executor.execute(this);
     }

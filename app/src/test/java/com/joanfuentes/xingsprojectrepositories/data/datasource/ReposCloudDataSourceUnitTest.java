@@ -10,7 +10,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class ReposCloudDataSourceUnitTest extends UnitTest{
-    private static final int FIRST_PAGE = 1;
+    private static final int FIRST_OFFSET_BLOCK = 1;
+    private static final int DATA_BLOCK_SIZE = 10;
     private ReposCloudDataSource datasource;
     @Mock private RepoApi repoApiMock;
 
@@ -21,8 +22,8 @@ public class ReposCloudDataSourceUnitTest extends UnitTest{
 
     @Test
     public void shouldGetRepos() {
-        datasource.getRepos(FIRST_PAGE);
+        datasource.getRepos(FIRST_OFFSET_BLOCK, DATA_BLOCK_SIZE);
 
-        verify(repoApiMock).getRepos(eq(FIRST_PAGE));
+        verify(repoApiMock).getRepos(eq(FIRST_OFFSET_BLOCK), eq(DATA_BLOCK_SIZE));
     }
 }
