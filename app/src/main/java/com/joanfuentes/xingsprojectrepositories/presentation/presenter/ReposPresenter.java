@@ -49,7 +49,11 @@ public class ReposPresenter extends BasePresenter {
     public void onStop() {}
 
     public void forceRefresh() {
-        getReposUseCase.invalidateCaches();
-        getRepos();
+        if (publicRepositoriesView != null && publicRepositoriesView.isReady()) {
+            publicRepositoriesView.clear();
+            publicRepositoriesView.showLoadingProgress();
+            getReposUseCase.invalidateCaches();
+            getRepos();
+        }
     }
 }

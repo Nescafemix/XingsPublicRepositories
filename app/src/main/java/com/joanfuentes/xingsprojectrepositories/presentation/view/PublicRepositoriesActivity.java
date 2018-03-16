@@ -122,11 +122,22 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     }
 
     private void forceRefresh() {
+        presenter.forceRefresh();
+    }
+
+    @Override
+    public void clear() {
         repos.clear();
         recyclerViewAdapter.notifyDataSetChanged();
         endlessScrollListener.resetState();
-        showLoadingProgressBar();
-        presenter.forceRefresh();
+    }
+
+    @Override
+    public void showLoadingProgress() {
+        contentLoadingProgressBar.setVisibility(View.VISIBLE);
+        connectivityErrorView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -193,13 +204,6 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         recyclerView.setVisibility(View.VISIBLE);
         connectivityErrorView.setVisibility(View.GONE);
         contentLoadingProgressBar.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    private void showLoadingProgressBar() {
-        contentLoadingProgressBar.setVisibility(View.VISIBLE);
-        connectivityErrorView.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
     }
 
