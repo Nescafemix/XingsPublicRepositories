@@ -52,7 +52,7 @@ public class ReposPresenter extends BasePresenter {
         if (publicRepositoriesView != null && publicRepositoriesView.isReady()) {
             publicRepositoriesView.clear();
             publicRepositoriesView.showLoadingProgress();
-            getReposUseCase.invalidateCaches();
+            getReposUseCase.invalidateData();
             getRepos();
         }
     }

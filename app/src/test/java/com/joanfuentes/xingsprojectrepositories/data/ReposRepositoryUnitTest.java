@@ -58,7 +58,7 @@ public class ReposRepositoryUnitTest extends UnitTest{
 
     @Test
     public void shouldInvalidateLocalDataSource() {
-        reposRepository.invalidateCaches();
+        reposRepository.invalidateData();
 
         verify(reposLocalDataSource).invalidate();
     }
