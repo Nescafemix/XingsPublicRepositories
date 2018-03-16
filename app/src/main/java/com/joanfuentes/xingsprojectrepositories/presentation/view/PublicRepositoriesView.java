@@ -8,6 +8,15 @@ public interface PublicRepositoriesView {
     boolean isReady();
     void renderRepos(List<Repo> repos);
     void renderError();
+    void renderSilentError();
+    void hideError();
     void clear();
+    void showList();
+    void hideList();
     void showLoadingProgress();
+    void hideLoadingProgress();
+    int getVisibleThreshold();
+    void showLoadingMoreProgress();
+    void hideLoadingMoreProgress();
+    boolean containsData();
 }

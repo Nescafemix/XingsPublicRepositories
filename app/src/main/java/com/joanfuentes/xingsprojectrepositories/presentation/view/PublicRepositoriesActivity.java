@@ -28,12 +28,10 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     private static final String FIRST_LIST_ELEMENT_POSITION = "first_list_element_position";
     private static final int VISIBLE_THRESHOLD = 5;
     private List<Repo> repos;
-    private List<Repo> savedRepos;
-    private boolean pendingLoadMore;
     private int positionToNavigate;
     private int offsetToApplyOnPositionToNavigate;
     private boolean pendingNavigateToPreviousPosition;
-    private boolean pendingLoadNecessaryData;
+    private Snackbar errorSnackBar;
 
     @BindView(R.id.item_list) RecyclerView recyclerView;
     @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
@@ -48,15 +46,11 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         repos = new ArrayList<>();
-        savedRepos = new ArrayList<>();
-        pendingLoadMore = false;
         pendingNavigateToPreviousPosition = false;
-        pendingLoadNecessaryData = false;
         if (savedInstanceState != null) {
             positionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_POSITION);
             offsetToApplyOnPositionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_OFFSET);
             pendingNavigateToPreviousPosition = true;
-            pendingLoadNecessaryData = true;
         }
         super.onCreate(savedInstanceState);
     }
@@ -79,6 +73,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     @Override
     void onViewReady() {
         setSwipe2Refresh();
+        presenter.restore(positionToNavigate);
         presenter.onStart();
     }
 
@@ -147,71 +142,55 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
 
     @Override
     public void renderRepos(List<Repo> repos) {
-        if (pendingLoadNecessaryData) {
-            continueLoadingNecessaryData(repos);
+        if (recyclerView.getAdapter() == null) {
+            this.repos = new ArrayList<>(repos);
+            setupFirstTimeRecyclerView(this.repos);
         } else {
-            showList();
-            if (recyclerView.getAdapter() == null) {
-                this.repos = new ArrayList<>(repos);
-                setupFirstTimeRecyclerView(this.repos);
-            } else {
-                int lastItemIndex = 0;
-                if (pendingLoadMore) {
-                    lastItemIndex = removeLastItem();
-                    pendingLoadMore = false;
-                }
-                this.repos.addAll(repos);
-                recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
-            }
+            int lastItemIndex = this.repos.size();
+            this.repos.addAll(repos);
+            recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
         }
     }
 
     @Override
     public void renderError() {
-        if (pendingLoadMore) {
-            endlessScrollListener.onLoadMoreCallbackFailed();
-            removeLastItem();
-            pendingLoadMore = false;
-        }
-        if (repos.isEmpty()) {
-            showConnectivityErrorMessage();
-        } else {
-            showConnectivityErrorMessageWithSnackBar();
-        }
+        showConnectivityErrorMessage();
     }
 
-    private void continueLoadingNecessaryData(List<Repo> repos) {
-        savedRepos.addAll(repos);
-        if (positionToNavigate + VISIBLE_THRESHOLD > savedRepos.size() - 1) {
-            loadMoreData();
-        } else {
-            pendingLoadNecessaryData = false;
-            renderRepos(savedRepos);
-        }
+    @Override
+    public void renderSilentError() {
+        endlessScrollListener.onLoadMoreCallbackFailed();
+        showConnectivityErrorMessageWithSnackBar();
     }
 
-    private int removeLastItem() {
-        int lastItemIndex = 0;
-        if (!this.repos.isEmpty()) {
-            lastItemIndex = this.repos.size() - 1;
-            this.repos.remove(lastItemIndex);
-            recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
-        }
-        return lastItemIndex;
-    }
-
-    private void showList() {
+    @Override
+    public void showList() {
         recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideList() {
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideError() {
         connectivityErrorView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void hideLoadingProgress() {
         contentLoadingProgressBar.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public int getVisibleThreshold() {
+        return VISIBLE_THRESHOLD;
     }
 
     private void showConnectivityErrorMessage() {
         connectivityErrorView.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-        contentLoadingProgressBar.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void setupFirstTimeRecyclerView(List<Repo> repos) {
@@ -247,44 +226,48 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         return new EndlessScrollListener.Callback() {
             @Override
             public void onLoadMore() {
-                loadMoreData();
+                presenter.getMoreRepos();
             }
         };
-    }
-
-    private void loadMoreData() {
-        pendingLoadMore = true;
-        recyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                showLoadMoreProgressBar();
-                presenter.getRepos();
-            }
-        });
     }
 
     private void showDialogWithRepoDetail(Repo repo) {
         dialogRepoDetail.show(this, repo);
     }
 
-    private void showLoadMoreProgressBar() {
-        repos.add(null);
-        recyclerViewAdapter.notifyItemInserted(repos.size() - 1);
+    public void showLoadingMoreProgress() {
+        int lastItemIndex = this.repos.size() - 1;
+        if (this.repos.get(lastItemIndex) != null) {
+            repos.add(null);
+            recyclerViewAdapter.notifyItemInserted(repos.size() - 1);
+        }
+    }
+
+    public void hideLoadingMoreProgress() {
+        if (!this.repos.isEmpty()) {
+            int lastItemIndex = this.repos.size() - 1;
+            if (this.repos.get(lastItemIndex) == null) {
+                this.repos.remove(lastItemIndex);
+                recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
+            }
+        }
     }
 
     private void showConnectivityErrorMessageWithSnackBar() {
         View rootView = getWindow().getDecorView().getRootView();
         if (rootView != null) {
-            Snackbar.make(rootView, R.string.error_check_connectivity,
-                    Snackbar.LENGTH_SHORT)
-                    .show();
-            hideRefreshIndicator();
+            if (errorSnackBar == null) {
+                errorSnackBar = Snackbar.make(rootView, R.string.error_check_connectivity,
+                        Snackbar.LENGTH_SHORT);
+            }
+            if (!errorSnackBar.isShown()) {
+                errorSnackBar.show();
+            }
         }
     }
 
-    private void hideRefreshIndicator() {
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+    @Override
+    public boolean containsData() {
+        return !this.repos.isEmpty();
     }
 }
