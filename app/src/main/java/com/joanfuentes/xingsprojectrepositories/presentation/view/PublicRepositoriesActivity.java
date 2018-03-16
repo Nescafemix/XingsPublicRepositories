@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class PublicRepositoriesActivity extends BaseActivity {
+public class PublicRepositoriesActivity extends BaseActivity implements PublicRepositoriesView {
     private static final String FIRST_LIST_ELEMENT_OFFSET = "first_list_element_offset";
     private static final String FIRST_LIST_ELEMENT_POSITION = "first_list_element_position";
     private static final int VISIBLE_THRESHOLD = 5;
@@ -129,6 +129,12 @@ public class PublicRepositoriesActivity extends BaseActivity {
         presenter.forceRefresh();
     }
 
+    @Override
+    public boolean isReady() {
+        return !isFinishing();
+    }
+
+    @Override
     public void renderRepos(List<Repo> repos) {
         if (pendingLoadNecessaryData) {
             continueLoadingNecessaryData(repos);
@@ -146,6 +152,20 @@ public class PublicRepositoriesActivity extends BaseActivity {
                 this.repos.addAll(repos);
                 recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
             }
+        }
+    }
+
+    @Override
+    public void renderError() {
+        if (pendingLoadMore) {
+            endlessScrollListener.onLoadMoreCallbackFailed();
+            removeLastItem();
+            pendingLoadMore = false;
+        }
+        if (repos.isEmpty()) {
+            showConnectivityErrorMessage();
+        } else {
+            showConnectivityErrorMessageWithSnackBar();
         }
     }
 
@@ -246,19 +266,6 @@ public class PublicRepositoriesActivity extends BaseActivity {
     private void showLoadMoreProgressBar() {
         repos.add(null);
         recyclerViewAdapter.notifyItemInserted(repos.size() - 1);
-    }
-
-    public void renderError() {
-        if (pendingLoadMore) {
-            endlessScrollListener.onLoadMoreCallbackFailed();
-            removeLastItem();
-            pendingLoadMore = false;
-        }
-        if (repos.isEmpty()) {
-            showConnectivityErrorMessage();
-        } else {
-            showConnectivityErrorMessageWithSnackBar();
-        }
     }
 
     private void showConnectivityErrorMessageWithSnackBar() {

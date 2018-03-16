@@ -2,19 +2,19 @@ package com.joanfuentes.xingsprojectrepositories.presentation.presenter;
 
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import com.joanfuentes.xingsprojectrepositories.domain.usecase.GetReposUseCase;
-import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesActivity;
+import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class ReposPresenter extends BasePresenter {
-    private final PublicRepositoriesActivity activity;
+    private final PublicRepositoriesView publicRepositoriesView;
     private final GetReposUseCase getReposUseCase;
 
     @Inject
-    public ReposPresenter(PublicRepositoriesActivity activity, GetReposUseCase getReposUseCase) {
-        this.activity = activity;
+    public ReposPresenter(PublicRepositoriesView publicRepositoriesView, GetReposUseCase getReposUseCase) {
+        this.publicRepositoriesView = publicRepositoriesView;
         this.getReposUseCase = getReposUseCase;
     }
 
@@ -31,15 +31,15 @@ public class ReposPresenter extends BasePresenter {
         getReposUseCase.execute(new GetReposUseCase.Callback() {
             @Override
             public void onReposReady(List<Repo> repos) {
-                if (activity != null && !activity.isFinishing()) {
-                    activity.renderRepos(repos);
+                if (publicRepositoriesView != null && publicRepositoriesView.isReady()) {
+                    publicRepositoriesView.renderRepos(repos);
                 }
             }
 
             @Override
             public void onError() {
-                if (activity != null && !activity.isFinishing()) {
-                    activity.renderError();
+                if (publicRepositoriesView != null && publicRepositoriesView.isReady()) {
+                    publicRepositoriesView.renderError();
                 }
             }
         });
