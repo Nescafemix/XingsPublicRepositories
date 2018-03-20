@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PublicRepositoriesView {
     boolean isReady();
-    void renderRepos(List<Repo> repos);
+    void renderRepos(List<Repo> repos, int numberOfRepos);
     void renderError();
     void renderSilentError();
     void hideError();
@@ -18,5 +18,4 @@ public interface PublicRepositoriesView {
     int getVisibleThreshold();
     void showLoadingMoreProgress();
     void hideLoadingMoreProgress();
-    boolean containsData();
 }

@@ -16,7 +16,6 @@ import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPres
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.DaggerRuntimeActivityComponent;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.RuntimeActivityModule;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,7 +26,6 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     private static final String FIRST_LIST_ELEMENT_OFFSET = "first_list_element_offset";
     private static final String FIRST_LIST_ELEMENT_POSITION = "first_list_element_position";
     private static final int VISIBLE_THRESHOLD = 5;
-    private List<Repo> repos;
     private int positionToNavigate;
     private int offsetToApplyOnPositionToNavigate;
     private boolean pendingNavigateToPreviousPosition;
@@ -45,7 +43,6 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        repos = new ArrayList<>();
         pendingNavigateToPreviousPosition = false;
         if (savedInstanceState != null) {
             positionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_POSITION);
@@ -122,7 +119,6 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
 
     @Override
     public void clear() {
-        repos.clear();
         recyclerViewAdapter.notifyDataSetChanged();
         endlessScrollListener.resetState();
     }
@@ -141,14 +137,12 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     }
 
     @Override
-    public void renderRepos(List<Repo> repos) {
+    public void renderRepos(List<Repo> repos, int numberOfNewItems) {
         if (recyclerView.getAdapter() == null) {
-            this.repos = new ArrayList<>(repos);
-            setupFirstTimeRecyclerView(this.repos);
+            setupFirstTimeRecyclerView(repos);
         } else {
-            int lastItemIndex = this.repos.size();
-            this.repos.addAll(repos);
-            recyclerViewAdapter.notifyItemRangeInserted(lastItemIndex, repos.size());
+            int positionStart = repos.size() - numberOfNewItems;
+            recyclerViewAdapter.notifyItemRangeInserted(positionStart, numberOfNewItems);
         }
     }
 
@@ -236,21 +230,11 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     }
 
     public void showLoadingMoreProgress() {
-        int lastItemIndex = this.repos.size() - 1;
-        if (this.repos.get(lastItemIndex) != null) {
-            repos.add(null);
-            recyclerViewAdapter.notifyItemInserted(repos.size() - 1);
-        }
+        recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.getItemCount() - 1);
     }
 
     public void hideLoadingMoreProgress() {
-        if (!this.repos.isEmpty()) {
-            int lastItemIndex = this.repos.size() - 1;
-            if (this.repos.get(lastItemIndex) == null) {
-                this.repos.remove(lastItemIndex);
-                recyclerViewAdapter.notifyItemRemoved(lastItemIndex);
-            }
-        }
+        recyclerViewAdapter.notifyItemRemoved(recyclerViewAdapter.getItemCount());
     }
 
     private void showConnectivityErrorMessageWithSnackBar() {
@@ -264,10 +248,5 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
                 errorSnackBar.show();
             }
         }
-    }
-
-    @Override
-    public boolean containsData() {
-        return !this.repos.isEmpty();
     }
 }
