@@ -37,9 +37,9 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     @BindView(R.id.connectivity_error) View connectivityErrorView;
 
     @Inject ReposPresenter presenter;
-    @Inject ReposAdapter recyclerViewAdapter;
     @Inject EndlessScrollListener endlessScrollListener;
     @Inject DialogRepoDetail dialogRepoDetail;
+    ReposAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,7 +190,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     private void setupFirstTimeRecyclerView(List<Repo> repos) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
-        recyclerViewAdapter.setData(repos);
+        recyclerViewAdapter = new ReposAdapter(presenter);
         recyclerViewAdapter.setHasStableIds(true);
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
