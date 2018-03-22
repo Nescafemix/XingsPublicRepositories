@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.joanfuentes.xingsprojectrepositories.R;
-import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPresenter;
 
 public class ReposAdapter extends RecyclerView.Adapter {
@@ -20,7 +19,7 @@ public class ReposAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder;
-        if (viewType == ReposPresenter.ROW_VIEW_TYPE_REPO) {
+        if (viewType == ReposPresenterModel.ROW_VIEW_TYPE_REPO) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.repos_item, parent, false);
             viewHolder = new RepoViewHolder(view, onItemLongClickListener);
@@ -65,6 +64,6 @@ public class ReposAdapter extends RecyclerView.Adapter {
     }
 
     interface Callback {
-        void onLongClick(Repo repo);
+        void onLongClick(int itemPosition);
     }
 }

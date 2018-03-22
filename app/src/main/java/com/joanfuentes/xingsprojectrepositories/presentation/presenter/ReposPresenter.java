@@ -3,29 +3,23 @@ package com.joanfuentes.xingsprojectrepositories.presentation.presenter;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import com.joanfuentes.xingsprojectrepositories.domain.usecase.GetReposUseCase;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesView;
+import com.joanfuentes.xingsprojectrepositories.presentation.view.ReposPresenterModel;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.ReposRowView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class ReposPresenter extends BasePresenter {
-    public static final int ROW_VIEW_TYPE_REPO = 0;
-    public static final int ROW_VIEW_TYPE_PROGRESSBAR = 1;
-    private static final int NO_ID = -1;
-
-
     private final PublicRepositoriesView view;
     private final GetReposUseCase getReposUseCase;
-    private int minimumPositionToLoad;
-    private List<Repo> savedRepos;
+    private ReposPresenterModel reposPresenterModel;
 
     @Inject
     public ReposPresenter(PublicRepositoriesView view, GetReposUseCase getReposUseCase) {
         this.view = view;
         this.getReposUseCase = getReposUseCase;
-        this.savedRepos = new ArrayList<>();
+        this.reposPresenterModel = new ReposPresenterModel();
     }
 
     @Override
@@ -34,9 +28,8 @@ public class ReposPresenter extends BasePresenter {
     }
 
     public void bindReposRowViewAtPosition(int position, ReposRowView rowView) {
-        Repo repo = savedRepos.get(position);
+        Repo repo = reposPresenterModel.getItemList(position);
         if (repo != null) {
-            rowView.setRepo(repo);
             rowView.setName(repo.getName());
             rowView.setOwner(repo.getOwnerLogin());
             if (repo.hasValidDescription()) {
@@ -57,19 +50,15 @@ public class ReposPresenter extends BasePresenter {
     }
 
     public int getReposRowsCount() {
-        return savedRepos.size();
+        return reposPresenterModel.getSizeList();
     }
 
     public int getReposRowViewType(int position) {
-        return savedRepos.get(position) != null ? ROW_VIEW_TYPE_REPO : ROW_VIEW_TYPE_PROGRESSBAR;
+        return reposPresenterModel.getItemListViewType(position);
     }
 
     public long getReposRowItemId(int position) {
-        long id = NO_ID;
-        if (getReposRowViewType(position) == ROW_VIEW_TYPE_REPO) {
-            id = savedRepos.get(position).getHtmlUrl().hashCode();
-        }
-        return id;
+        return reposPresenterModel.getItemListId(position);
     }
 
     public void getRepos() {
@@ -78,9 +67,7 @@ public class ReposPresenter extends BasePresenter {
 
     public void getMoreRepos() {
         if (view != null && view.isReady()) {
-            int lastItemIndex = this.savedRepos.size() - 1;
-            if (this.savedRepos.get(lastItemIndex) != null) {
-                this.savedRepos.add(null);
+            if (reposPresenterModel.addProgressBarToTheList()) {
                 view.showLoadingMoreProgress();
             }
             getRepos();
@@ -93,18 +80,14 @@ public class ReposPresenter extends BasePresenter {
             public void onReposReady(List<Repo> repos) {
                 if (view != null && view.isReady()) {
                     if (isNecessaryToLoadMoreData(repos.size())) {
-                        savedRepos.addAll(repos);
+                        reposPresenterModel.addReposToTheList(repos);
                         getRepos();
                     } else {
-                        minimumPositionToLoad = 0;
-                        view.showList();
-                        if (containsRepos()) {
-                            hideLoadingMoreProgress();
-                        } else {
-                            view.hideLoadingProgress();
-                        }
-                        savedRepos.addAll(repos);
-                        view.renderRepos(savedRepos, repos.size());
+                        reposPresenterModel.clearMinimumPositionToLoad();
+                        view.hideError();
+                        hideLoadingProgressViews();
+                        reposPresenterModel.addReposToTheList(repos);
+                        view.renderRepos(reposPresenterModel.getSizeList(), repos.size());
                     }
                 }
             }
@@ -112,38 +95,29 @@ public class ReposPresenter extends BasePresenter {
             @Override
             public void onError() {
                 if (view != null && view.isReady()) {
-                    if (containsRepos()) {
-                        view.hideLoadingMoreProgress();
-                        view.renderSilentError();
-                    } else {
-                        view.hideList();
+                    if (reposPresenterModel.isTheListEmpty()) {
+                        view.hideRepos();
                         view.hideLoadingProgress();
-                        view.renderError();
+                        view.showError();
+                    } else {
+                        view.hideLoadingMoreProgress();
+                        view.showSilentError();
                     }
                 }
             }
         });
     }
 
-    private boolean containsRepos() {
-        return !this.savedRepos.isEmpty();
-    }
-
-
-    private void hideLoadingMoreProgress() {
-        if (!this.savedRepos.isEmpty()) {
-            int lastItemIndex = this.savedRepos.size() - 1;
-            if (this.savedRepos.get(lastItemIndex) == null) {
-                this.savedRepos.remove(lastItemIndex);
-                view.hideLoadingMoreProgress();
-            }
+    private void hideLoadingProgressViews() {
+        if (reposPresenterModel.isTheListEmpty()) {
+            view.hideLoadingProgress();
+        } else if (reposPresenterModel.removeProgressBarFromTheList()) {
+            view.hideLoadingMoreProgress();
         }
     }
 
-    private boolean isNecessaryToLoadMoreData(int repos) {
-        return repos > 0
-                && minimumPositionToLoad > 0
-                && (minimumPositionToLoad + view.getVisibleThreshold() > savedRepos.size() - 1);
+    private boolean isNecessaryToLoadMoreData(int numberOfNewRepos) {
+        return reposPresenterModel.needsMoreData(numberOfNewRepos);
     }
 
     @Override
@@ -151,7 +125,7 @@ public class ReposPresenter extends BasePresenter {
 
     public void forceRefresh() {
         if (view != null && view.isReady()) {
-            savedRepos.clear();
+            reposPresenterModel.clearList();
             view.clear();
             view.showLoadingProgress();
             getReposUseCase.invalidateData();
@@ -159,7 +133,11 @@ public class ReposPresenter extends BasePresenter {
         }
     }
 
-    public void restore(int minimumPositionToLoad) {
-        this.minimumPositionToLoad = minimumPositionToLoad;
+    public void restoreMiniumPositionToLoad(int minimumPositionToLoad) {
+        reposPresenterModel.setMinimumPositionToLoad(minimumPositionToLoad);
+    }
+
+    public void onItemListLongClick(int itemPosition) {
+        view.showRepoDetail(reposPresenterModel.getItemList(itemPosition));
     }
 }

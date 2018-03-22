@@ -16,8 +16,6 @@ import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPres
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.DaggerRuntimeActivityComponent;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.RuntimeActivityModule;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -25,7 +23,6 @@ import butterknife.BindView;
 public class PublicRepositoriesActivity extends BaseActivity implements PublicRepositoriesView {
     private static final String FIRST_LIST_ELEMENT_OFFSET = "first_list_element_offset";
     private static final String FIRST_LIST_ELEMENT_POSITION = "first_list_element_position";
-    private static final int VISIBLE_THRESHOLD = 5;
     private int positionToNavigate;
     private int offsetToApplyOnPositionToNavigate;
     private boolean pendingNavigateToPreviousPosition;
@@ -70,7 +67,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     @Override
     void onViewReady() {
         setSwipe2Refresh();
-        presenter.restore(positionToNavigate);
+        presenter.restoreMiniumPositionToLoad(positionToNavigate);
         presenter.onStart();
     }
 
@@ -137,33 +134,38 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     }
 
     @Override
-    public void renderRepos(List<Repo> repos, int numberOfNewItems) {
+    public void renderRepos(int numberOfItems, int numberOfNewItems) {
+        recyclerView.setVisibility(View.VISIBLE);
         if (recyclerView.getAdapter() == null) {
-            setupFirstTimeRecyclerView(repos);
+            setupFirstTimeRecyclerView();
         } else {
-            int positionStart = repos.size() - numberOfNewItems;
+            int positionStart = numberOfItems - numberOfNewItems;
             recyclerViewAdapter.notifyItemRangeInserted(positionStart, numberOfNewItems);
         }
     }
 
     @Override
-    public void renderError() {
-        showConnectivityErrorMessage();
+    public void showError() {
+        connectivityErrorView.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void renderSilentError() {
+    public void showSilentError() {
         endlessScrollListener.onLoadMoreCallbackFailed();
-        showConnectivityErrorMessageWithSnackBar();
+        View rootView = getWindow().getDecorView().getRootView();
+        if (rootView != null) {
+            if (errorSnackBar == null) {
+                errorSnackBar = Snackbar.make(rootView, R.string.error_check_connectivity,
+                        Snackbar.LENGTH_SHORT);
+            }
+            if (!errorSnackBar.isShown()) {
+                errorSnackBar.show();
+            }
+        }
     }
 
     @Override
-    public void showList() {
-        recyclerView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideList() {
+    public void hideRepos() {
         recyclerView.setVisibility(View.GONE);
     }
 
@@ -178,16 +180,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    @Override
-    public int getVisibleThreshold() {
-        return VISIBLE_THRESHOLD;
-    }
-
-    private void showConnectivityErrorMessage() {
-        connectivityErrorView.setVisibility(View.VISIBLE);
-    }
-
-    private void setupFirstTimeRecyclerView(List<Repo> repos) {
+    private void setupFirstTimeRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         recyclerViewAdapter = new ReposAdapter(presenter);
@@ -195,7 +188,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
         endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
-        endlessScrollListener.setVisibleThreshold(VISIBLE_THRESHOLD);
+        endlessScrollListener.setVisibleThreshold(ReposPresenterModel.VISIBLE_THRESHOLD);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.addOnScrollListener(endlessScrollListener);
@@ -209,8 +202,8 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     private ReposAdapter.Callback getItemLongClickListenerCallback() {
         return new ReposAdapter.Callback() {
             @Override
-            public void onLongClick(Repo repo) {
-                showDialogWithRepoDetail(repo);
+            public void onLongClick(int itemPosition) {
+                presenter.onItemListLongClick(itemPosition);
             }
         };
     }
@@ -225,7 +218,8 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         };
     }
 
-    private void showDialogWithRepoDetail(Repo repo) {
+    @Override
+    public void showRepoDetail(Repo repo) {
         dialogRepoDetail.show(this, repo);
     }
 
@@ -235,18 +229,5 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
 
     public void hideLoadingMoreProgress() {
         recyclerViewAdapter.notifyItemRemoved(recyclerViewAdapter.getItemCount());
-    }
-
-    private void showConnectivityErrorMessageWithSnackBar() {
-        View rootView = getWindow().getDecorView().getRootView();
-        if (rootView != null) {
-            if (errorSnackBar == null) {
-                errorSnackBar = Snackbar.make(rootView, R.string.error_check_connectivity,
-                        Snackbar.LENGTH_SHORT);
-            }
-            if (!errorSnackBar.isShown()) {
-                errorSnackBar.show();
-            }
-        }
     }
 }

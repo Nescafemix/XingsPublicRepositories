@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.joanfuentes.xingsprojectrepositories.R;
-import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,7 +13,6 @@ import butterknife.OnLongClick;
 class RepoViewHolder extends RecyclerView.ViewHolder implements ReposRowView {
     private static final String EMPTY_STRING = "";
     private ReposAdapter.Callback onItemLongClickListener;
-    private Repo repo;
 
     @BindView(R.id.existDescriptionView) View existDescriptionView;
     @BindView(R.id.notExistDescriptionView) View notExistDescriptionView;
@@ -36,14 +34,9 @@ class RepoViewHolder extends RecyclerView.ViewHolder implements ReposRowView {
     @OnLongClick()
     public boolean clickedItemList(View view) {
         if (onItemLongClickListener != null) {
-            onItemLongClickListener.onLongClick(repo);
+            onItemLongClickListener.onLongClick(getAdapterPosition());
         }
         return true;
-    }
-
-    @Override
-    public void setRepo(Repo repo) {
-        this.repo = repo;
     }
 
     @Override
