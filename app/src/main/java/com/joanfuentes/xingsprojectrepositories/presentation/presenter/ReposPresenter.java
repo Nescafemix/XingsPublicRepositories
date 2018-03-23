@@ -3,7 +3,7 @@ package com.joanfuentes.xingsprojectrepositories.presentation.presenter;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import com.joanfuentes.xingsprojectrepositories.domain.usecase.GetReposUseCase;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesView;
-import com.joanfuentes.xingsprojectrepositories.presentation.view.ReposPresenterModel;
+import com.joanfuentes.xingsprojectrepositories.presentation.model.ReposPresenterModel;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.ReposRowView;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class ReposPresenter extends BasePresenter {
             @Override
             public void onReposReady(List<Repo> repos) {
                 if (view != null && view.isReady()) {
-                    if (isNecessaryToLoadMoreData(repos.size())) {
+                    if (reposPresenterModel.needsMoreData(repos.size())) {
                         reposPresenterModel.addReposToTheList(repos);
                         getRepos();
                     } else {
@@ -114,10 +114,6 @@ public class ReposPresenter extends BasePresenter {
         } else if (reposPresenterModel.removeProgressBarFromTheList()) {
             view.hideLoadingMoreProgress();
         }
-    }
-
-    private boolean isNecessaryToLoadMoreData(int numberOfNewRepos) {
-        return reposPresenterModel.needsMoreData(numberOfNewRepos);
     }
 
     @Override

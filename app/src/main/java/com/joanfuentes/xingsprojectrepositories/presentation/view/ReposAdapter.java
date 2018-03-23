@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.joanfuentes.xingsprojectrepositories.R;
+import com.joanfuentes.xingsprojectrepositories.presentation.model.ReposPresenterModel;
 import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPresenter;
 
 public class ReposAdapter extends RecyclerView.Adapter {

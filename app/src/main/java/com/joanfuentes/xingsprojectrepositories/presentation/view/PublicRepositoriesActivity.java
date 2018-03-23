@@ -12,6 +12,7 @@ import android.view.View;
 import com.joanfuentes.xingsprojectrepositories.Application;
 import com.joanfuentes.xingsprojectrepositories.R;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
+import com.joanfuentes.xingsprojectrepositories.presentation.model.ReposPresenterModel;
 import com.joanfuentes.xingsprojectrepositories.presentation.presenter.ReposPresenter;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.DaggerRuntimeActivityComponent;
 import com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di.RuntimeActivityModule;
@@ -188,7 +189,7 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
         recyclerViewAdapter.setOnItemLongClickListener(getItemLongClickListenerCallback());
         endlessScrollListener.setLinearLayoutManager(layoutManager);
         endlessScrollListener.setOnLoadMoreCallback(getEndlessScrollListenerCallback());
-        endlessScrollListener.setVisibleThreshold(ReposPresenterModel.VISIBLE_THRESHOLD);
+        endlessScrollListener.setVisibleThreshold(ReposPresenterModel.DEFAULT_VISIBLE_THRESHOLD);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.addOnScrollListener(endlessScrollListener);
