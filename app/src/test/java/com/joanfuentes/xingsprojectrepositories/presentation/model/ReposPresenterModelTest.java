@@ -26,6 +26,7 @@ public class ReposPresenterModelTest extends UnitTest {
     private static final int SOME_THRESHOLD = 1;
     private static final int NO_MINIMUM_POSITION_TO_LOAD = 0;
     private static final int FIRST_POSITION_IN_A_LIST = 0;
+    private static final int ZERO = 0;
 
     @Override
     protected void onSetup() {}
@@ -119,6 +120,17 @@ public class ReposPresenterModelTest extends UnitTest {
         ReposPresenterModel reposPresenterModel = new ReposPresenterModel();
         reposPresenterModel.setMinimumPositionToLoad(NO_MINIMUM_POSITION_TO_LOAD);
 
+        boolean existAMinimumPositionToLoad = reposPresenterModel.existAMinimumPositionToLoad();
+
+        assertFalse(existAMinimumPositionToLoad);
+    }
+
+    @Test
+    public void shouldClearTheMinimumPositionToLoad() {
+        ReposPresenterModel reposPresenterModel = new ReposPresenterModel();
+        reposPresenterModel.setMinimumPositionToLoad(SOME_NUMBER_OF_MINIMUM_POSITION_TO_LOAD);
+
+        reposPresenterModel.clearMinimumPositionToLoad();
         boolean existAMinimumPositionToLoad = reposPresenterModel.existAMinimumPositionToLoad();
 
         assertFalse(existAMinimumPositionToLoad);
@@ -224,5 +236,16 @@ public class ReposPresenterModelTest extends UnitTest {
         long itemListId = reposPresenterModel.getItemListId(reposPresenterModel.getSizeList() - 1);
 
         assertEquals(ReposPresenterModel.NO_ID, itemListId);
+    }
+
+    @Test
+    public void shouldClearTheList() {
+        ReposPresenterModel reposPresenterModel = new ReposPresenterModel();
+        reposPresenterModel.addReposToTheList(SOME_REPOS);
+
+        reposPresenterModel.clearList();
+        long sizeList = reposPresenterModel.getSizeList();
+
+        assertEquals(ZERO, sizeList);
     }
 }

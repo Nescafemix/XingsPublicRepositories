@@ -40,14 +40,15 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     ReposAdapter recyclerViewAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
         pendingNavigateToPreviousPosition = false;
         if (savedInstanceState != null) {
             positionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_POSITION);
             offsetToApplyOnPositionToNavigate = savedInstanceState.getInt(FIRST_LIST_ELEMENT_OFFSET);
             pendingNavigateToPreviousPosition = true;
+            presenter.restoreMinimumPositionToLoad(positionToNavigate);
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -68,7 +69,11 @@ public class PublicRepositoriesActivity extends BaseActivity implements PublicRe
     @Override
     void onViewReady() {
         setSwipe2Refresh();
-        presenter.restoreMiniumPositionToLoad(positionToNavigate);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         presenter.onStart();
     }
 

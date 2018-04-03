@@ -27,6 +27,10 @@ public class ReposPresenter extends BasePresenter {
         getRepos();
     }
 
+    public void setPresenterModel(ReposPresenterModel reposPresenterModel) {
+        this.reposPresenterModel = reposPresenterModel;
+    }
+
     public void bindReposRowViewAtPosition(int position, ReposRowView rowView) {
         Repo repo = reposPresenterModel.getItemList(position);
         if (repo != null) {
@@ -95,12 +99,11 @@ public class ReposPresenter extends BasePresenter {
             @Override
             public void onError() {
                 if (view != null && view.isReady()) {
+                    hideLoadingProgressViews();
                     if (reposPresenterModel.isTheListEmpty()) {
                         view.hideRepos();
-                        view.hideLoadingProgress();
                         view.showError();
                     } else {
-                        view.hideLoadingMoreProgress();
                         view.showSilentError();
                     }
                 }
@@ -129,11 +132,13 @@ public class ReposPresenter extends BasePresenter {
         }
     }
 
-    public void restoreMiniumPositionToLoad(int minimumPositionToLoad) {
+    public void restoreMinimumPositionToLoad(int minimumPositionToLoad) {
         reposPresenterModel.setMinimumPositionToLoad(minimumPositionToLoad);
     }
 
     public void onItemListLongClick(int itemPosition) {
-        view.showRepoDetail(reposPresenterModel.getItemList(itemPosition));
+        if (view != null && view.isReady()) {
+            view.showRepoDetail(reposPresenterModel.getItemList(itemPosition));
+        }
     }
 }

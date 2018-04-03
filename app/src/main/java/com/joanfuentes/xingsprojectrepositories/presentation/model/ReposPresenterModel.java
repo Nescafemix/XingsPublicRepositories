@@ -2,10 +2,11 @@ package com.joanfuentes.xingsprojectrepositories.presentation.model;
 
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReposPresenterModel {
+public class ReposPresenterModel implements Serializable {
     public static final int NO_ID = -1;
     public static final int DEFAULT_VISIBLE_THRESHOLD = 5;
     public static final int ROW_VIEW_TYPE_REPO = 0;
@@ -26,10 +27,6 @@ public class ReposPresenterModel {
 
     public void addReposToTheList(List<Repo> repos) {
         list.addAll(repos);
-    }
-
-    public List<Repo> getList() {
-        return list;
     }
 
     public boolean isTheListEmpty() {
