@@ -1,7 +1,6 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.presenter;
 
 import com.joanfuentes.xingsprojectrepositories.UnitTest;
-import com.joanfuentes.xingsprojectrepositories.data.ReposRepository;
 import com.joanfuentes.xingsprojectrepositories.domain.model.Repo;
 import com.joanfuentes.xingsprojectrepositories.domain.usecase.GetReposUseCase;
 import com.joanfuentes.xingsprojectrepositories.presentation.model.ReposPresenterModel;
@@ -12,18 +11,12 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -38,21 +31,13 @@ public class ReposPresenterTest extends UnitTest {
             new ArrayList<>(Arrays.asList(SOME_REPO, SOME_REPO, SOME_REPO));
     private static final ArrayList<Repo> SOME_MORE_REPOS =
             new ArrayList<>(Arrays.asList(SOME_REPO, SOME_REPO));
-    private static final ArrayList<Repo> NO_REPOS = new ArrayList<>();
     private static final int SOME_ITEM_POSITION = 2;
-    private static final int SOME_NUMBER_OF_LAST_RECEIVED_REPOS = 3;
-    private static final int NO_RECEIVED_REPOS = 0;
-    private static final int SOME_NUMBER_OF_MINIMUM_POSITION_TO_LOAD = 5;
-    private static final int LOWEST_POSITIVE_MINIMUM_POSITION_TO_LOAD = 1;
-    private static final int SOME_THRESHOLD = 1;
-    private static final int NO_MINIMUM_POSITION_TO_LOAD = 0;
     private static final int FIRST_POSITION_IN_A_LIST = 0;
     private static final boolean FORKABLE = true;
     private static final boolean NOT_FORKABLE = false;
     private static final boolean VALID = true;
     private static final boolean INVALID = false;
     private static final boolean READY = true;
-    private static final boolean NOT_READY = false;
     private static final String SOME_DESCRIPTION = "some description";
     @Mock PublicRepositoriesView view;
     @Mock GetReposUseCase getReposUseCase;
@@ -261,5 +246,4 @@ public class ReposPresenterTest extends UnitTest {
 
         verify(view).showRepoDetail(eq(SOME_REPO));
     }
-
 }
