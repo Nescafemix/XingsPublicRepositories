@@ -3,7 +3,7 @@ package com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di;
 import android.app.Activity;
 
 import com.joanfuentes.xingsprojectrepositories.data.api.endpoint.internal.di.EndpointsModule;
-import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesActivity;
+import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesView;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,7 +17,7 @@ public class RuntimeActivityModule implements ActivityModule {
     }
 
     @Override @Provides
-    public PublicRepositoriesActivity providePublicRepositoriesActivity() {
-        return (PublicRepositoriesActivity) activity;
+    public PublicRepositoriesView providePublicRepositoriesView() {
+        return (PublicRepositoriesView) activity;
     }
 }

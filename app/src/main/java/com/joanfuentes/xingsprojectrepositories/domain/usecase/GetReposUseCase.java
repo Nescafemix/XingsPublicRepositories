@@ -43,8 +43,8 @@ public class GetReposUseCase implements Runnable {
         this.executor.execute(this);
     }
 
-    public void invalidateCaches() {
-        repository.invalidateCaches();
+    public void invalidateData() {
+        repository.invalidateData();
     }
 
     private void notifyOnSuccess(final List<Repo> repos) {

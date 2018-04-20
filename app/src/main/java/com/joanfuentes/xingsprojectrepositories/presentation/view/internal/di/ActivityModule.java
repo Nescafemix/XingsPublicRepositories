@@ -1,7 +1,7 @@
 package com.joanfuentes.xingsprojectrepositories.presentation.view.internal.di;
 
-import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesActivity;
+import com.joanfuentes.xingsprojectrepositories.presentation.view.PublicRepositoriesView;
 
 interface ActivityModule {
-    PublicRepositoriesActivity providePublicRepositoriesActivity();
+    PublicRepositoriesView providePublicRepositoriesView();
 }

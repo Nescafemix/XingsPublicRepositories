@@ -38,7 +38,7 @@ public class ReposRepository extends BaseOffsetRepository {
         }
     }
 
-    public void invalidateCaches() {
+    public void invalidateData() {
         offsetBlock = FIRST_OFFSET_BLOCK;
         localDataSource.invalidate();
     }

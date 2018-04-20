@@ -27,19 +27,13 @@ public class EndlessScrollListener extends RecyclerView.OnScrollListener {
             int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
             int visibleItemCount = view.getChildCount();
             int totalItemCount = layoutManager.getItemCount();
-            if (totalItemCount < previousTotalItemCount) {
-                this.previousTotalItemCount = totalItemCount;
-                if (totalItemCount == 0) {
-                    loading = true;
-                }
-            }
             if (loading
                     && (totalItemCount > previousTotalItemCount + PROGRESS_BAR_ITEM)) {
                 loading = false;
                 previousTotalItemCount = totalItemCount;
             }
             if (!loading
-                    && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                    && (totalItemCount - visibleItemCount) < (firstVisibleItem + visibleThreshold)) {
                 loading = true;
                 if (onLoadMoreCallback != null) {
                     onLoadMoreCallback.onLoadMore();

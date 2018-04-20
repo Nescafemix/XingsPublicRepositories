@@ -36,4 +36,11 @@ public class ReposLocalDataSourceUnitTest extends UnitTest{
 
         verify(repoMemcacheMock).saveRepos(eq(reposMock), eq(FIRST_OFFSET_BLOCK));
     }
+
+    @Test
+    public void shouldInvalidate() {
+        datasource.invalidate();
+
+        verify(repoMemcacheMock).invalidate();
+    }
 }
